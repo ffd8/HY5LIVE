@@ -1,0 +1,3047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<!-- cc teddavis.org 2023 -->
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>HY5LIVE</title>
+	
+	<style>
+		@font-face {
+			font-family: 'roboto_mono';
+			src: url('includes/fonts/robotomono-regular-webfont.woff2') format('woff2'),
+			url('includes/fonts/robotomono-regular-webfont.woff') format('woff');
+			font-weight: 400;
+			font-style: normal;
+		}
+		body {
+			margin:0;
+			font-family: Arial, sans-serif;
+			background:#000;
+		}
+		a{
+			color:#fff;
+		}
+		*{
+			box-shadow: initial!important;
+			box-sizing: border-box;
+			font-family: 'roboto_mono', sans-serif;
+			outline:none;
+		}
+		input{
+			outline:none;
+		}
+		
+
+		/*	FRAME	*/
+		#iframe-container {
+			position:fixed;
+			width: 100vw;
+			height: 100vh;
+		}
+		iframe, #hy5live-editor{
+			position:fixed;
+			border:none;
+			width:100%;
+			height:100%;
+		}
+		#frame-cover{
+			outline:none;
+			border:none;
+			margin:0;
+			background:none;
+			position:fixed;
+			top:0;
+			left:0;
+			width:100vw;
+			height:100vh;
+			z-index:0;
+			pointer-events: all;
+			overflow:hidden;
+			background:none;
+			z-index:0;
+			pointer-events:none;
+		}
+		
+
+		/* EDITOR 	*/
+		.hy5live-ta, #hy5live-editor, #hy5live-code, #inspectcode{
+			top:0;
+			z-index:9;
+			background:none !important;
+			font-size:12pt;
+			line-height: 1.3em;
+			font-family:'Roboto Mono',monospace;
+			color:#1ee;
+		}
+		#hy5live-editor, .ace_scroller, #hy5live-code{
+			cursor:cell !important;
+		}
+		#hy5live-code{
+			top:0vh;
+			height:100vh;
+			border:none;
+			box-sizing: content-box;
+			  height: 100%;
+			  margin-bottom: -5px;
+			  padding-bottom: 50px;
+			  margin-right: -5px; 
+			  padding-right: 50px;
+			  overflow: scroll;
+		}
+		.ace_line{
+		}
+		.ace_line_bg, .ace_line, .ace_line span, .ace_active-line, .ace_layer *, .ace_marker-layer *{
+			background:none;
+			border:none !important;
+		}
+		.ace_line_bg{
+			background:rgba(0, 0, 0, .5) !important;
+		}
+		.ace_cursor{
+			background:#fff  !important;
+			width:3px  !important;
+		}
+		.ace_selection{
+			background:rgba(255, 191, 0, .5) !important ;
+			border-radius:0 !important;
+		}
+		.ace_selected-word{
+			border:1px solid rgba(255, 191, 0, .25) !important;
+			border-radius:0 !important;
+			background:rgba(255, 191, 0, .1) !important ;
+		}
+		.ace_marker{
+			position:fixed;
+			background:rgba(0, 255, 255, .6);
+		}
+		.ace_comment{
+			color:#aaa !important;
+		}
+		.ace_tooltip{
+			opacity:.7;
+			background:rgba(0, 0, 0, .6);
+			color:#fff;
+			font-size:10pt;
+		}
+		
+
+		/*	GUI / NAV	*/
+		#gui{
+			position:fixed;
+			width:225px !important;
+			top:10px;
+			right:10px;
+			background:rgba(0, 0, 0, .5);
+			border:1px solid #666;
+			border-bottom:none;
+			color:#fff;
+			z-index:11;
+			-webkit-user-select: none; /* Safari */
+			-ms-user-select: none; /* IE 10 and IE 11 */
+			user-select: none; /* Standard syntax */
+			border-bottom:1px solid #666;
+		}
+		.gui-title{
+			padding-left:5px;
+			float:left;
+		}
+		.gui-nav, .gui-nav-buttons{
+			background:rgba(255, 255, 255, .3);
+			font-weight:bold;
+			border-bottom:1px solid #666;
+		}
+		.gui-nav:first-of-type{
+			border-bottom:none;	
+			background:rgba(0, 0, 0, .75);
+		}
+		.gui-nav-buttons{
+			display:flex;
+			justify-content: space-between;
+		}
+		svg{
+			height:20px;
+			padding:0;
+			padding-top:3px;
+		}
+		.gui-buttons{
+			display:flex;
+			justify-content: space-evenly;
+		}
+		.nav-button{
+			flex: 1;
+			max-width:40px;
+			text-align:center;
+			opacity:.5;
+			cursor:pointer;
+		}
+		.nav-button:hover{
+			opacity: 1;
+			background:rgba(255, 255, 255, .3);
+		}
+		.nav-button-active{
+			opacity: 1;
+			background:rgba(255, 255, 255, .3);
+		}
+
+		#gallery{
+			border-bottom:1px solid #666;
+			display:none;
+		}
+		.gui-files{
+			background:rgba(80, 80, 80, .5);
+			max-height:22vh;
+			overflow:auto;
+		}
+
+
+		/*	FILES	*/
+		.file{
+			position:relative;
+			width:100%;
+			white-space: nowrap;
+			overflow:hidden;
+			font-size:.8em;
+		}
+		.file:hover{
+			background:rgba(140, 140, 140, .75);
+			cursor:pointer;
+		}
+		.file-name{
+			padding:3px;
+			float:left;
+		}
+		.active, .active:hover{
+			background:rgba(0, 255, 0, .5);
+		}
+		.viewed{
+			opacity:.5;
+		}
+		.active.viewed{
+			opacity:1;
+		}
+		.file-nav{
+			position: absolute;
+			height:100%;
+			right:0;
+			z-index:1;
+		}
+		.file-nav svg{
+			height:18px;
+			padding:0 !important;
+			margin:0;
+			margin-bottom:-4px !important;
+			border-left:1px solid rgba(100, 100, 100);
+		}
+		.file-nav div{
+			opacity: .8;	
+			float:left;
+		}
+		.file-nav div:hover{
+			opacity: 1;			
+		}
+		.sort-ghost {
+		  opacity: 0;
+		}
+		.sort-drag {
+		  opacity: 1;
+		}
+
+
+		/*	BUG	*/
+		#bug{
+			position:fixed;
+			display:none;
+			bottom:5px;
+			left:15px;
+			mix-blend-mode: difference;
+			z-index:999;
+		}
+		#bug-emoji{
+			font-size:1.5em;
+			transform: translate(0, -30px);
+			animation: rot 3s infinite ease;
+			animation-direction:alternate;
+		}
+		#bug-msg{
+			color:#fff;
+			font-size:1em;
+		}
+		@keyframes rot {
+			from {
+				transform: rotate(0deg) translate(0, -10px) ;
+			}
+			to {
+				transform: rotate(-50deg) translate(0, -10px) ;
+			}
+		}
+
+
+		/*	REFERENCES	*/
+		#api{
+			color:#fff;
+			font-family:'Roboto Mono',monospace;
+			display:none;
+		}
+		#api-contents{
+			outline:none;
+			font-size:9pt;
+			height:50vh;
+			overflow:auto;
+		}
+		.api-sec{
+		}
+		.api-sec-header{
+			background:rgba(35, 35, 35, .5);
+			padding:2px 0 2px 5px;
+			font-size:1.2em;
+			border-top: 1px solid #666;
+			border-bottom: 1px solid #666;
+		}
+		.api-sec-header:first-of-type{
+			border-top:none;	
+		}
+		.api-sec-methods{
+			padding:5px;
+		}
+		.api-method{
+			opacity:.75;
+			cursor:help;
+		}
+		.api-method:hover{
+			opacity: 1;
+		}
+
+		#settings{
+			display:none;
+		}
+		.settings-item{
+			padding:5px;
+		}
+		.settings-label{
+			float:left;
+			margin-right:15px;
+		}
+		.settings-input{
+			background:none;
+			border:none;
+			border-bottom:2px solid #fff;
+			color:#fff;
+		}
+		#settings-fontsize{
+			width: 50px;
+		}
+
+
+		/*	SKETCHES	*/
+		#sketches{
+			display:none;
+		}
+		#sketches-contents{
+			height:auto;
+			max-height:40vh;
+		}
+		.sketches-sketch{
+		}
+
+		/*	DEMOS	*/
+		#demos{
+		}
+
+
+		/*	TOOLTIPS	*/
+		.tooltip {
+			position: fixed;
+			z-index: 9999;
+			font-size: 12px;
+			line-height: 12px;
+			padding: 5px;
+			background: #222;
+			color: #fff;
+			border: 1px solid #aaa;
+			border-radius: 5px;
+			font-family: sans-serif;
+			box-sizing: border-box;
+			transition: opacity 0.3s, visibility 0s;
+			visibility: hidden;
+			opacity: 0;
+		}
+
+		.tooltip-arrow{
+			position: absolute;
+			width: 7px;
+			height: 7px;
+			background: inherit;
+			transform: rotate(45deg);
+			border: 1px solid #aaa;
+		}
+
+
+		/*	MODAL		*/
+		#modal{
+			position:fixed;
+			width:100%;
+			height:100%;
+			z-index:200;
+			display:none;
+		}
+		#modal-bg{
+			position:absolute;
+			width:100%;
+			height:100%;
+		}
+		#modal-content{
+			position:absolute;
+			margin-left:25%;
+			margin-top:15vh;
+			width:50vw;
+			min-width:400px;
+			height:70vh;
+			background:rgba(0, 0, 0, .8);
+			color:#fff;
+			padding:15px;
+			border:1px solid #888;
+			font-size:10pt;
+			line-height:1.4em;
+			overflow:hidden;
+		}
+		#modal-content-holder{
+			margin-top:-10px;
+			margin-bottom:10px;
+			height:calc(100% - 25px);
+			border-bottom:1px solid #fff;
+			overflow: hidden;
+		}
+		#modal-head{
+			font-size:2em;
+			border-bottom:1px solid #fff;
+		}
+		#modal-body{
+			padding:5px 0;
+			min-height:100px;
+			max-height:100%;
+			overflow:auto;
+		}
+		#modal-body input{
+			border:1px solid #fff;
+			background:#fff;
+			color:#000;
+			padding:2px;
+			font-size:1.0em;
+		}
+		#modal-buttons{
+			position:absolute;
+			bottom:15px;
+			right:15px;
+		}
+		#modal-buttons button{
+			font-size:1.2em;
+			border-radius: 5px;
+			background:rgba(100, 100, 100, .9);
+			color:#fff;
+			border:1px solid #777;
+			cursor:pointer;
+			margin-left:10px;
+			padding:2px 15px 2px 15px;
+		}
+		#modal-buttons button:hover{
+			background:rgba(100, 100, 100, 1);
+			border:1px solid #aaa;
+		}
+		#modal-buttons .button-default{
+			background:rgba(50, 137, 230, .9);
+			animation: pulse75 1.5s linear infinite;
+		}
+		#modal-buttons .button-default:hover{
+			background:rgba(50, 137, 230, 1);
+		}
+		#modal input{
+			font-size:1.4em;
+			border:1px solid #444;
+			background:#fff;
+			border-radius: 0px;
+			color:#000;
+			padding:5px;
+			width:80%;
+		}
+		#modal input[type="checkbox"]{
+			width:auto;
+		}
+		#modal select{
+			font-size:1.2em;
+			padding:3px;
+			border: 1px solid #fff;
+			border-radius: 3px;
+			background:#333;
+			color:#fff;
+			width:250px;
+		}
+		#modal{
+			height:70vh;
+		}
+		#modal pre, #modal code{
+			font-family: 'roboto_mono', 'Monaco', monospace;
+			font-weight: 200;
+			
+		}
+		#modal code{
+		 	font-size:9pt;
+		 	border:1px solid #888;
+			border-radius:4px;
+			background:#666;
+			padding:0 1px 0 1px;
+			box-sizing: border-box;
+		 }
+		#modal pre code{
+		}
+		#modal a{
+			color:#fff;
+		}
+		#modal ul{
+			list-style-type: none;
+			margin-left: 15px;
+			padding-left: 0px;
+		}
+		#modal li:before {
+			content:"– ";
+			margin-left:-15px;
+		}
+		#modal h2{
+			font-size:16pt;
+			margin-top:15px;
+			border-top:1px solid #aaa;
+			padding-top:15px;
+		}
+		#modal h3{
+			margin-top:25px;
+			font-size:14pt;
+		}
+		#modal h4{
+			font-size:12pt;
+		}
+		#modal img{
+
+		}
+		#modal strong{
+			font-size:11pt;
+			line-height:1.5em;
+			background:#666;
+		}
+
+		#modal tr:hover{
+			border:none;
+			background:#555;
+		}
+		#modal td{
+			width:50%;
+			padding:2px 20px 2px 0px;
+			vertical-align: top;
+			border-bottom:1px solid #fff;
+		}
+		#modal code{
+			padding:0 3px 0 3px;
+		}
+
+		#modal .import-file{
+			background:#666;
+			margin-bottom:1px;
+			width:95%;
+			overflow:hidden;
+			padding:1px;
+		}
+		#modal .import-dup{
+			background:red;
+		}
+
+		
+		/*	CONSOLE		*/
+		#console{
+			position:fixed;
+			left:0;
+			bottom:0;
+			z-index:99;
+			color:#fff;
+			padding:15px;
+			mix-blend-mode: DIFFERENCE;
+			opacity:0;
+			transition: .2s opacity;
+		}
+
+
+		/*	SKETCH EDITOR		*/
+		#inspectcode{
+			margin-top:5px;
+			border:1px solid #fff;
+			border-radius: 5px;
+		}
+		#sketch-editor-nav{
+			display:flex;
+		}
+		.sketch-editor-buttons{
+			display:flex;
+		}
+		.sketch-editor-button{
+			position:relative;
+			height:30px;
+			width:30px;
+			margin-left:15px;
+			opacity:.5;
+			cursor:pointer;
+		}
+		.sketch-editor-button svg{
+			padding:0;
+			margin-bottom:-5px;
+			height:100% !important;
+		}
+
+
+		/*	ANIMATIONS		*/
+		.pulse{
+			animation: pulse50 .5s linear infinite;
+		}
+
+		.pulse-slow{
+			animation: pulse50 1.5s linear infinite;
+		}
+
+		@keyframes pulse50 {
+			0%	 { opacity: .5 }
+			50%	 { opacity: 1 }
+			100% { opacity: .5 }
+		}
+
+		@keyframes pulse75 {
+			0%	 { opacity: .75 }
+			50%	 { opacity: 1 }
+			100% { opacity: .75 }
+		}
+
+		.hifive{
+			animation: hifive 3.75s ease-in-out infinite;
+		}
+
+		@keyframes hifive {
+			0%	 { margin-right: -1px }
+			50%	 {  margin-right: 30px}
+			100% {  margin-right: -1px }
+		}
+	</style>
+</head>
+<body>
+	<div id="modal" tabindex="-1">
+		<div id="modal-bg" onclick="toggleElm('modal', false)"></div>
+		<div id="modal-content">
+			<div id="modal-content-holder">
+				<div id="modal-head"></div>
+				<div id="modal-body"></div>
+			</div>
+			<div id="modal-buttons"></div>
+		</div>
+	</div>
+
+	<div id="console">hello world</div>
+
+	<div id="hy5live-editor">
+		<pre id="hy5live-code" autofocus class="hy5live-ta"></pre>
+	</div>
+	<div id="iframe-container">
+		<iframe id="hy5-iframe" src="about:blank"></iframe>
+		<div id="frame-cover"></div>
+	</div>
+	
+	<div id="bug"><div id="bug-emoji">🐛</div> - <div id="bug-msg">hello world</div></div>
+	
+
+	<div id="gui">
+		<div id="gui-header" class="gui-nav">
+			<div class="gui-title" style="cursor:move;float:none;border-bottom:1px solid #666;"><span data-tip="v .3">HY5LIVE</span></div>
+			<div class="gui-buttons">
+				
+				<div class="nav-button" onclick="toggleAbout();" data-tip="About">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-help-circle"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12" y2="17"></line></svg>
+				</div>
+				<div id="nav-settings" class="nav-button" onclick="toggleElm('settings')" data-tip="Settings">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+				</div>
+				<div class="nav-button" onclick="initSketch()" data-tip="New Sketch">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-plus"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+				</div>
+				<div id="nav-sketches" class="nav-button" onclick="toggleElm('sketches')" data-tip="Sketches">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-archive"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
+				</div>
+				<div id="nav-api" class="nav-button" onclick="toggleElm('api')" data-tip="API">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" >
+					<path class="st0" d="M2,3h6c2.2,0,4,1.8,4,4v14c0-1.7-1.3-3-3-3H2V3z"/>
+					<path class="st0" d="M22,3h-6c-2.2,0-4,1.8-4,4v14c0-1.7,1.3-3,3-3h7V3z"/>
+					<path class="st0" d="M12,23.5"/>
+					<path class="st0" d="M8.6,10.8H5"/>
+					<path class="st0" d="M8.6,14.6H5"/>
+					<path class="st0" d="M8.6,7.1H5"/>
+					<path class="st0" d="M18.8,10.8h-3.6"/>
+					<path class="st0" d="M18.8,14.6h-3.6"/>
+					<path class="st0" d="M18.8,7.1h-3.6"/>
+					</svg>
+				</div>
+				<div class="nav-button" onclick="saveScreenshot()" data-tip="Snapshot">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+				</div>
+			</div>	
+		</div>
+
+		<div id="gallery">
+			<div class="gui-nav-buttons">
+				<div class="gui-title">Gallery</div>
+				<div class="gui-buttons">
+					<div class="nav-button" onclick="randomFiles('gallery')" data-tip="Random Gallery">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shuffle"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+					</div>
+					<div class="nav-button" onclick="initSketch()" data-tip="Clear Gallery">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+					</div>
+				</div>
+			</div>
+			<div id="gallery-contents" class="gui-files">
+			</div>
+		</div>
+
+		<div id="api">
+			<div class="gui-nav-buttons">
+				<div class="gui-title">Hydra API</div>
+				<div class="gui-buttons">
+					<div class="nav-button" onclick="toggleElm('api')" data-tip="Clear Show + Tell">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+					</div>
+				</div>
+			</div>
+			<div id="api-contents"></div>
+		</div>
+
+		<div id="settings">
+			<div class="gui-nav-buttons">
+				<div class="gui-title">Settings</div>
+				<div class="gui-buttons">
+					<div class="nav-button" onclick="toggleElm('settings')" data-tip="Close">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+					</div>
+				</div>
+			</div>
+			<div id="settings-contents" class="api-sec">
+				<div class="settings-item" data-tip="Hide cursor when editor is toggled off" data-tip-left>
+					<input type="checkbox" id="settings-cursor" onchange="setCursor(this.checked)"> Hide Cursor
+				</div>
+				<!-- EDITOR: -->
+				<div class="settings-item" data-tip="Set font size" data-tip-left>
+					<div class="settings-label">Size:</div> <input id="settings-fontsize" class="settings-input" type="number" width="2" value="0" onkeyup="setFontsize(this.value)">
+				</div>
+			</div>
+		</div>
+
+		<div id="sketches">
+			<div class="gui-nav-buttons">
+				<div class="gui-title">Sketches</div>
+				<div class="gui-buttons">
+					<div id="sketches-nav-save" class="nav-button" onclick="sketchSave('sketches')" data-tip="Save Sketch">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+					</div>
+					<div id="sketches-nav-save" class="nav-button" onclick="sketchEditor('sketches')" data-tip="Sketch Editor">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+					</div>
+					<div class="nav-button" onclick="hydraFiles.sketches.export()" data-tip="Export All"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></div>
+					<div class="nav-button" onclick="toggleElm('sketches')" data-tip="Close">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+					</div>
+				</div>
+			</div>
+			<div id="sketches-contents" class="gui-files">
+			</div>
+		
+			<div id="demos">
+				<div class="gui-nav-buttons">
+					<div class="gui-title">Demos</div>
+					<div id="demos-nav" class="gui-buttons">
+						<div id="sketches-nav-save" class="nav-button" onclick="sketchSave('demos')" data-tip="Save Sketch">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+						</div>
+						<div id="sketches-nav-save" class="nav-button" onclick="sketchEditor('demos')" data-tip="Sketch Editor">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+						</div>
+						<div class="nav-button" onclick="hydraFiles.demos.export()" data-tip="Export All"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></div>
+						<div class="nav-button" onclick="toggleElm('sketches')" data-tip="Close">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+						</div>
+					</div>
+				</div>
+				<div id="demos-contents" class="gui-files">
+				</div>
+			</div>
+		</div>
+		
+	</div>
+
+	<script src="includes/js/ace/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script src="includes/js/ace/src-min-noconflict/ext-language_tools.js?8" type="text/javascript" charset="utf-8"></script>
+	<script src="includes/js/libs/loopBreaker.min.js"></script>
+	<script src="includes/js/libs/beautify.min.js"></script>
+	<script src="includes/js/libs/marked.min.js"></script>
+	<script src="includes/js/libs/mousetrap.min.js"></script>
+	<!-- <script src="includes/js/libs/mousetrap-pause.min.js"></script> -->
+	<script src="includes/js/utils/hydra-api.js" type="text/javascript" charset="utf-8"></script>
+	<script src="includes/js/utils/hydra-files.js" type="text/javascript" charset="utf-8"></script>
+	<script src="includes/js/libs/Sortable.min.js"></script>
+
+	<script>
+		var hy5live = {
+			version: '0.3',
+			revision: 2,
+			debug: true,
+			demosLocked: false,
+			elms: {
+				console : document.getElementById('console'),
+			},
+			timers: {
+				console,
+			},
+			hasBug:false,
+		}
+
+		const dropArea = document.getElementById('hy5live-editor');
+		var bug = document.getElementById('bug');
+		var bugMsg = document.getElementById('bug-msg');
+		const api = document.getElementById('api');
+		const apiContents = document.getElementById('api-contents');
+		const gui = document.getElementById('gui');
+		const gallery = document.getElementById('gallery');
+		hy5live.frame = document.getElementById('hy5-iframe');
+		hy5live.frameContent = hy5live.frame.contentWindow;
+		const hy5Editor = document.getElementById('hy5live-editor');
+		const hy5Code = document.getElementById('hy5live-code');
+		const settings = document.getElementById('settings');
+
+		const sketches = document.getElementById('sketches')
+
+		var Range = ace.require('ace/range').Range // get reference to ace/range
+		var editor, langTools, markerID = [], programmedChange = false
+
+		let hydraInit = false
+		let hydraFiles = {
+			gallery: new Files('gallery', 'gallery-contents', {navActive:false}),
+			sketches: new Files('sketches', 'sketches-contents', {viewsActive: false}),
+			demos: new Files('demos', 'demos-contents', {viewsActive: false, navActive: hy5live.demosLocked ? false : true}),
+		}
+
+		if(hy5live.demosLocked){
+			document.getElementById('demos-nav').style.display = 'none'
+		}
+		// hydraFiles.gallery.navActive = false
+		// hydraFiles.sketches.viewsActive = false
+		let hydraGallery = [], hydraView = []
+		
+		hy5live.settings = {
+			revision:hy5live.revision,
+			initCode: `// code hydra [+/-] p5 or drag + drop .js hydra/p5 file(s) here\n`,
+			fontsize:10,
+		}
+
+		hy5live.log = (msg)=>{
+			if(hy5live.debug){
+				console.log(msg)					
+			}
+		}
+
+		hy5live.bug = (e)=>{
+			hy5live.log(e)
+			bugMsg.innerHTML = e.message
+			bug.style.display = 'flex'
+			if(e != ''){
+				hy5live.hasBug = true
+			}else{
+				bugMsg.innerHTML = ''
+				bug.style.display = 'none'
+			}
+		}
+
+		hy5live.console = (msg) =>{
+			clearTimeout(hy5live.timers.console)
+			hy5live.elms.console.style.opacity = 1
+			hy5live.elms.console.innerHTML = msg
+			hy5live.timers.console = setTimeout(()=>{
+				hy5live.elms.console.style.opacity = 0
+			}, 2000)
+		}
+
+		var curPositions = []
+
+		let shortcuts = [
+			{key:'ctrl+e', func: ()=>{
+				// let curState = toggleElm('hy5live-editor') // *** 
+				let curState = toggleEditor()
+				if(curState){
+					editor.focus();
+				}else{
+					editor.blur()
+				}
+				return false;
+			}},
+			{key:'ctrl+m', func: ()=>{
+				toggleElm('gui')
+				return false;
+			}},
+			{key:'ctrl+shift+r', shift:true, func: ()=>{
+				toggleElm('api')
+				return false;
+			}},
+			{key:'ctrl+shift+s', shift:true, func: ()=>{
+				saveScreenshot()
+				return false;
+			}},
+			{key:'ctrl+t', func: ()=>{
+				tidyCode(editor)
+				return false;
+			}},
+			{key:'ctrl+shift+t', shift:true, func: ()=>{
+				tidyCode(editor)
+				return false;
+			}},
+			{key:'ctrl+enter', func: ()=>{ 
+				recompile()
+				return false;
+			}},
+			{key:'shift+alt+enter', shift:true, func: ()=>{ 
+				// selectionCompile
+				// recompile(true)
+				// recompileSelection()
+				let compileRange = editor.getSelectionRange()//.start.row
+				recompileSelection(compileRange.start.row, compileRange.end.row)
+				return false;
+			}},
+			{key:'shift+ctrl+enter', shift:true, func: ()=>{ 
+				// hardCompile
+				hydraInit = false
+				recompile()
+				return false;
+			}},
+			{key:'ctrl+n', func: ()=>{
+				initSketch()
+				return false;
+			}}, 
+			{key:'ctrl+,', func: ()=>{
+				toggleElm('settings')
+				return false;
+			}}, 
+
+			]
+
+		function keyCode(key){
+			let keyMap = {"0":48,"1":49,"2":50,"3":51,"4":52,"5":53,"6":54,"7":55,"8":56,"9":57,"d":68,"b":66,"a":65,"s":83,"i":73,"f":70,"k":75,"ß":219,"Dead":220,"+":187,"ü":186,"p":80,"o":79,"u":85,"z":90,"t":84,"r":82,"e":69,"w":87,"g":71,"h":72,"j":74,"l":76,"ö":192,"ä":222,"#":191,"y":89,"x":88,"c":67,"v":86,"n":78,"m":77,",":188,".":190,"-":189,"ArrowRight":39,"ArrowLeft":37,"ArrowUp":38,"ArrowDown":40,"PageDown":34,"Clear":12,"Enter":13,"enter":13,"Return":13,"Home":36,"PageUp":33,"End":35,"Delete":46,"Insert":45,"Control":17,"ctrl":17,"AltGraph":18,"Meta":92,"meta":92,"Alt":18,"alt":18,"Shift":16,"shift":16,"CapsLock":20,"Tab":9,"Escape":27,"F1":112,"F2":113,";":188,":":190,"_":189,"'":191,"*":187,"Q":81,"W":87,"E":69,"R":82,"T":84,"Z":90,"S":83,"A":65,"D":68,"I":73,"U":85,"O":79,"Y":89,"X":88,"C":67,"F":70,"V":86,"G":71,"B":66,"H":72,"N":78,"J":74,"M":77,"K":75,"L":76,"P":80,"Ö":192,"Ä":222,"Ü":186,"!":49,"\"":50,"§":51,"$":52,"%":53,"&":54,"/":55,"(":56,")":57,"=":48,"?":219,"°":220}
+
+			return keyMap[key]
+		}
+
+		function toggleElm(e, force = true, cb){
+			let nav = ['settings', 'sketches', 'api']
+			let elm = document.getElementById(e)
+			let navIcon = undefined
+
+			if(nav.indexOf(e) > -1){
+				hy5live.settings.toggleElm = e
+				settingsSet()
+
+				navIcon = document.getElementById(`nav-${e}`)
+				const index = nav.indexOf(e);
+				if (index > -1) { // only splice array when item is found
+				  nav.splice(index, 1); // 2nd parameter means remove one item only
+				  for(let n of nav){
+					//hy5live.log(n)
+					//toggleElm(n, false)
+					hideElm(document.getElementById(n), document.getElementById(`nav-${n}`))
+				  }
+				}
+			}
+
+			var elmVisible = false
+			if((!checkElm(elm)||!checkElm(gui)) && force){
+				if(!checkElm(gui)){
+					showElm(gui)
+				}
+
+				showElm(elm, navIcon)
+				elmVisible = true
+			}else{
+				hideElm(elm, navIcon)
+				if(nav.indexOf(e) > -1){
+					hy5live.settings.toggleElm = null
+					settingsSet()
+				}
+			}
+			// console.log(`${e}: ${checkElm(elm)} // gui: ${checkElm(gui)}`)
+
+			if(cb){
+				cb()
+			}
+			initTips()
+			return elmVisible
+		}
+
+		function checkElm(elm){
+			if(elm.style.display == 'none' || elm.style.display == ''){
+				return false
+			}else{
+				return true
+			}
+		}
+
+		function showElm(elm, navIcon){
+			elm.style.display = 'block'
+			if(navIcon != undefined){
+				navIcon.classList.add('nav-button-active')
+			}
+			initTips()
+		}
+
+		function hideElm(elm, navIcon){
+			elm.style.display = 'none'
+			if(navIcon != undefined){
+				navIcon.classList.remove('nav-button-active')
+			}
+			if(editor != null){
+				editor.focus()
+			}
+		}
+
+		function toggleEditor(force){
+			let editorVisible = false // *** return tru/false
+			if(hy5Editor.style.display != 'block' && !force){
+				hy5Editor.style.display = 'block'
+				editorVisible = true
+			}else{
+				hy5Editor.style.display = 'none';
+			}
+			toggleEditorUpdate();
+			return editorVisible
+		}
+
+		function toggleEditorUpdate(){
+			if(hy5Editor.style.visibility != 'visible'){
+				const canv = document.querySelector('canvas');
+				editor.blur();
+			}else{
+				editor.focus();
+			}
+		}
+
+		function initAbout(){
+			let markedOptions = {
+				headerPrefix:'marked-'
+			};
+			let readmePath = 'README.md?' + hy5live.revision;
+			let request = new XMLHttpRequest();
+			request.open('GET', readmePath, true);
+			request.send();
+			request.addEventListener('load', function(){
+				let markedReadme = marked(request.responseText, markedOptions);
+				let verrev = '<p>v '+ hy5live.version + ' - r' + hy5live.revision+'<br>';
+				markedReadme = markedReadme.replace(/(<p>).+?(<br>)/, verrev);
+				markedReadme = markedReadme.replace(`hydra 🙏 p5.js live-coding environment!`, `<div style="text-align:center;width:330px;"><span class="pulse-slow">HY</span>DRA <img src="includes/images/hy5-left.png" height="20px"><span class="hifive"></span><img src="includes/images/hy5-right.png" height="20px"> P<span class="pulse-slow">5</span> live-coding environment!</div>`); // <p[^>]*> // [v-\d].*<br>cc
+				// let p5liveabout = '<div id="about-alert" class="vex-long">'+markedReadme+'</div>';
+
+				hy5live.about = markedReadme
+				
+			});
+
+		}
+		function toggleAbout(){
+			modal({
+				title: '',
+				body: hy5live.about,
+				buttons: [{
+					text:'OK',
+					default:true,
+					click:()=>{toggleElm('modal')}
+				}]
+			})
+		}
+
+
+		function toggleAbout_old(){
+			modal({
+				title: 'HY5LIVE',
+				body: `
+				cc <a href="https://teddavis.org" target="_blank">teddavis.org</a> 2023<br><br>
+
+				<div style="text-align:center;width:180px;"><span class="pulse">HY</span>DRA <img src="includes/images/hy5-left.png" height="20px"><span class="hifive"></span><img src="includes/images/hy5-right.png" height="20px"> P<span class="pulse">5</span></div>
+				Welcome to <span class="pulse">HY5</span>LIVE : a live-coding editor for mixing Hydra + P5.<br>
+				compose in P5, bend in Hydra || vidsynth in Hydra, apply in P5 || ...<br>
+				Write both in global-mode, merging the best of both worlds!<br><br>
+
+				SHORTCUTS<br>
+				- CTRL + ENTER, compile block<br>
+				- CTRL + SHIFT + ENTER, compile all<br>
+				- CTRL + ALT + ENTER, compile selection<br>
+				- CTRL + E, toggle editor<br>
+				- CTRL + M, toggle menu<br>
+				- CTRL + N, new sketch<br>
+				- CTRL + SHIFT + T, tidy code<br>
+				- CTRL + SHIFT + S, save snapshot (code + png)<br>
+				
+				`,
+				buttons: [
+					{
+						text:'OK',
+						default:true,
+						click:()=>{toggleElm('modal')}
+					}
+				]
+			})
+		}
+
+		function sketchEditor(hf){
+			var inspectEditor, sketchSel = -1, curCode;
+			if(hydraFiles[hf].current != null){
+				sketchSel = hydraFiles[hf].current
+			}
+			let opts = ''
+			for(let i=0; i < hydraFiles[hf].files.length;i++){
+				opts += `<option value="${i}">${hydraFiles[hf].files[i].name}</option>`
+			}
+			modal({
+				title: 'SKETCH EDITOR',
+				body: `
+				<div id="sketch-editor-nav">
+					<div>
+						<select id="sketch-editor-select" data-tip="Sketch to edit">
+							<option value="-1">New Sketch (template)</option>
+							${opts}
+						</select>
+					</div>
+					<div class=sketch-editor-buttons>
+						<div id="sketch-editor-save" class="sketch-editor-button" data-tip="Save">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+						</div>
+						<div id="sketch-editor-reset" class="sketch-editor-button" data-tip="Reset">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-refresh-ccw"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
+						</div>
+					</div>
+				</div>
+				<div id="inspectcode" style="position:relative;height:400px;width:100%;"></div>
+				
+				`,
+				buttons: [
+					{
+						text:'CLOSE',
+						click:()=>{toggleElm('modal')}
+					},{
+						text:'CLOSE + LOAD',
+						click:()=>{
+							if(sketchSel == -1){
+								initSketch()
+							}else{
+								hydraFiles[hf].parseCode(sketchSel)
+							}
+							toggleElm('modal')
+						}
+					},
+				],
+				onload: ()=>{
+
+					var btns = {
+						save: document.getElementById('sketch-editor-save'),
+						reset: document.getElementById('sketch-editor-reset'),
+					}
+
+					inspectEditor = ace.edit("inspectcode");
+					inspectEditor.setTheme("ace/theme/ambiance");
+					inspectEditor.session.setMode('ace/mode/javascript');
+					inspectEditor.setOptions({
+						showPrintMargin: false,
+						animatedScroll: false,
+						displayIndentGuides: false,
+						useWorker: true,
+						showLineNumbers: false,
+						showGutter: false,
+						tabSize: 4, useSoftTabs: false,
+					});
+					// tidyCode(inspectEditor);
+					inspectEditor.focus();
+					inspectEditor.setValue(hy5live.settings.initCode, 1)
+					inspectEditor.moveCursorTo(0,0);
+					inspectEditor.on('change', ()=>{
+						if(inspectEditor.getValue() != curCode){
+							btns.save.classList.add('pulse-slow')
+							btns.reset.style.opacity = 1
+						}else{
+							btns.save.classList.remove('pulse-slow')
+							btns.reset.style.opacity = .5
+						}
+						
+					})
+
+					if(sketchSel != -1){
+						document.getElementById('sketch-editor-select').value = sketchSel
+						loadCode = hydraFiles[hf].files[sketchSel].code
+						inspectEditor.setValue(loadCode, 1)
+					}
+
+					document.getElementById('sketch-editor-select').addEventListener('change', function() {
+						var loadCode = ''
+						sketchSel = this.value
+
+						if(sketchSel == -1){
+							loadCode = hy5live.settings.initCode
+						}else{
+							loadCode = hydraFiles[hf].files[sketchSel].code						  		
+						}
+						curCode = loadCode
+						inspectEditor.setValue(loadCode, 1)
+					});
+
+					btns.save.onclick = ()=>{
+						// console.log('saveSketch')
+						if(sketchSel == -1){
+							hy5live.settings.initCode = inspectEditor.getValue()
+							settingsSet()
+						}else{
+							hydraFiles[hf].update(sketchSel, inspectEditor.getValue())
+						}
+						// hydraFiles[hf].files[sketchSel].code = inspectEditor.getValue()
+						btns.save.classList.remove('pulse-slow')
+						btns.reset.style.opacity = .5
+					}
+
+					btns.reset.onclick = ()=>{
+						inspectEditor.setValue(curCode, 1)
+						btns.save.classList.remove('pulse-slow')
+						btns.reset.style.opacity = .5
+					}
+					initTips()
+				}
+			})
+		}
+
+		function modal(opts = {title:'modal', body:'hello world', buttons:'OK', onload:''}){ // title, body, buttons, cb
+			var old_element = document.getElementById('modal');
+			var new_element = old_element.cloneNode(true);
+			old_element.parentNode.replaceChild(new_element, old_element);
+
+			let m = {
+				window: document.getElementById('modal'),
+				head: document.getElementById('modal-head'),
+				body: document.getElementById('modal-body'),
+				buttons: document.getElementById('modal-buttons'),
+				content: document.getElementById('modal-content')
+			}
+
+			m.content.style.width = '50vw'
+			m.content.style.height = '70vh'
+			m.content.style.marginLeft = '25%'
+			m.head.style.display = 'block'
+
+			if(opts.title == ''){
+				m.head.style.display = 'none'
+			}else{
+				m.head.innerHTML = opts.title					
+			}
+			m.body.innerHTML = opts.body
+			m.buttons.innerHTML = ''
+			for(let b of opts.buttons){
+				// m.buttons.innerHTML += `<button onclick="${b.click}">${b.text}</button>`	
+				var o = document.createElement('button')
+				o.innerHTML = b.text
+				o.onclick = ()=>{b.click()}
+				if(b.default){
+					m.window.addEventListener("keyup", (event) => {if (event.key === "Enter") {event.preventDefault(); b.click() } })
+
+					// m.window.onkeyup = (event)=>{
+					// 	if (event.key === "Enter") {event.preventDefault(); b.click() } 
+					// }
+					o.classList.add('button-default')
+				}
+				m.buttons.appendChild(o)
+				// o.addEventListener('click', )
+			}
+			toggleElm('modal', true)
+			editor.blur()
+			m.window.focus()
+			if(opts.hasOwnProperty('onload') && opts.onload != ''){opts.onload()}
+		}
+
+		// window.addEventListener('keyup', (e) => {
+		//   if (e.keyCode === 27) {
+		//     toggleElm('modal', false)
+		//   }
+		// })
+
+		function modalValue(name){
+			return document.getElementsByName(name)[0].value
+		}
+
+		function modelSmall(w = 500, h = 200){
+			let modalContent = document.getElementById('modal-content')
+			modalContent.style.width = `${w}px`
+			modalContent.style.height = `${h}px`
+			modalContent.style.marginLeft = "calc((100% - 500px)/2)"
+		}
+
+
+		function init(){
+			initSettings()
+			initElms()
+			initEditor()
+			setEditorCommands()
+			initCode()
+			initAPI()
+			initAbout()
+			initTips()
+			initShortcuts()
+			parseSettings()
+			// console.log(hy5live.revision +' / '+ hy5live.settings.revision)
+
+			if(!hy5live.settings.hasOwnProperty('revision') || hy5live.settings.revision != hy5live.revision || !hy5live.settings.hasOwnProperty('init')){
+					setTimeout(()=>{
+						toggleAbout()
+					hy5live.settings.revision = hy5live.revision
+					hy5live.settings.init = false
+					initDemos()
+					settingsSet()
+					}, 100)
+			}
+
+			
+
+			let autoCompletePath = 'includes/js/utils/hydra_autocomplete.json?' + hy5live.revision;
+			fetch(autoCompletePath)
+			.then(res => res.json())
+			.then(acOBJ => loadAutoComplete(acOBJ))
+
+
+			setTimeout(settingsProcess, 0)
+		}
+		init()
+
+		function initSettings(){
+			if(localStorage.hasOwnProperty('hy5.settings')){
+				settingsGet()
+			}else{
+				settingsSet()
+			}
+		}
+
+		function parseSettings(){
+			document.getElementById('settings-cursor').checked = hy5live.settings.cursor
+			document.getElementById('hy5live-code').style.fontSize = hy5live.settings.fontsize + 'pt'
+			document.getElementById('settings-fontsize').value = hy5live.settings.fontsize
+		}
+
+		function initDemos(){
+			let demosPath = 'includes/demos/HY5LIVE_demos.json?' + hy5live.revision;
+			fetch(demosPath)
+			.then(res => res.json())
+			.then(demoOBJ => {
+				demoOBJ.files.reverse()
+				hydraFiles.demos.clear()
+				for(let f of demoOBJ.files){
+					hydraFiles.demos.add(f.name, f.code, false)
+					hydraFiles.demos.render()
+				}
+			})
+		}
+
+
+		function settingsGet(){
+			if(localStorage.hasOwnProperty('hy5.settings')){
+				tempSettings = JSON.parse(localStorage.getItem('hy5.settings'))
+				for (const [key, value] of Object.entries(tempSettings)) {
+					hy5live.settings[key] = value
+				}
+				// hy5live.settings = JSON.parse(localStorage.getItem('hy5live.settings'))
+			}
+		}
+
+		function settingsSet(){
+			localStorage.setItem('hy5.settings', JSON.stringify(hy5live.settings))
+		}
+
+		function settingsProcess(){
+			if(hy5live.settings.hasOwnProperty('toggleElm')){
+				if(hy5live.settings.toggleElm != null)
+				toggleElm(hy5live.settings.toggleElm)
+			}
+		}
+
+
+
+		var snippetManager
+		function initEditor(){
+			snippetManager = ace.require("ace/snippets").snippetManager
+			langTools = ace.require('ace/ext/language_tools');
+			editor = ace.edit("hy5live-code");
+			editor.setTheme("ace/theme/ambiance");
+			editor.session.setMode("ace/mode/javascript");
+			editor.setOptions({
+				showPrintMargin: false,
+				animatedScroll: false,
+				displayIndentGuides: false,
+				useWorker: true,
+				showLineNumbers: false,
+				showGutter: false,
+				scrollPastEnd:1,
+				tabSize: 4, useSoftTabs: false,
+				enableBasicAutocompletion: true,
+				enableSnippets: true
+			});
+
+			// console.log(editor)
+			
+			// set editor BG
+			editor.renderer.on('afterRender', function(){
+				adjustLines();
+			});
+			editor.focus()
+
+			var changeTimer
+			editor.getSession().on('change', function(delta) {
+				clearTimeout(changeTimer)
+				if (editor.curOp && editor.curOp.command.name){
+
+				}else{
+					programmedChange = true;
+					recompile()
+					return false
+				}
+
+				curPos = delta.start;
+				curPositions.push(delta.start);
+				if(hydraInit){
+					changeTimer = setTimeout(recompile, 500)
+				}
+			});
+
+
+
+		// 	var SnippetManager = ace.require("ace/snippets").snippetManager;
+		   // var snippets = [
+		   //    {
+		   //      name: "build",
+		   //      content: "Hello build"
+		   //    }
+		   //  ];
+		   //  SnippetManager.register(snippets, "javascript");
+
+			snippetManager.register([
+			{
+				"tabTrigger": "p5",
+				"name": "p5",
+				"content": 
+`function setup() {
+	createCanvas(windowWidth, windowHeight)
+}
+
+function draw() {
+	\${1}
+}
+
+P5.init() // default: s0, ie. src(s0).out(o0)
+`
+
+			},{
+				"tabTrigger": "p5detail",
+				"name": "p5detail",
+				"content": 
+`function setup() {
+	createCanvas(windowWidth, windowHeight)
+}
+
+function draw() {
+	\${1}
+}
+
+P5.init() // default: s0
+// P5.zIndex() // default: -1
+// P5.hide() // hide p5 canvas, p5.show()
+// H.pixelDensity() // default: 2, retina hydra
+
+// src(s0).out(o0) // view p5 in hydra
+`
+
+			},{
+				"tabTrigger": "p52hydra",
+				"name": "p52hydra",
+				"content": 
+`function setup() {
+	createCanvas(windowWidth, windowHeight)
+}
+
+function draw() {
+	\${1}
+}
+
+P5.init()
+P5.hide()
+H.pixelDensity() // 2.0
+
+src(s0)
+	.out(o0)
+`
+			},{
+				"tabTrigger": "hydra2p5",
+				"name": "hydra2p5",
+				"content": 
+`// hydra2p5
+
+function setup() {
+	createCanvas(windowWidth, windowHeight, WEBGL)
+}
+
+function draw() {
+	// clear()
+
+	H.get()
+	texture(h0)
+	\${1}
+}
+
+P5.zIndex(1)
+P5.init()
+// H.hide()
+
+osc().out(o0)
+`
+			},{
+				"tabTrigger": "hydra2p5x4",
+				"name": "hydra2p5x4",
+				"content": 
+`// hydra2p5x4
+
+function setup() {
+	createCanvas(windowWidth, windowHeight, WEBGL)
+}
+
+function draw() {
+	H.render() // get hydra o0-o3 as h0-h3
+	// texture(h0)
+	// texture(h1)
+	// texture(h2)
+	// texture(h3)
+	\${1}
+}
+
+P5.zIndex(1)
+H.pixelDensity(.5)
+// H.hide()
+
+osc().out(o0)
+noize().out(o1)
+voronoi().out(o2)
+gradient().out(o3)
+
+render()
+`
+			},{
+				"tabTrigger": "src",
+				"name": "src",
+				"content": 
+`src(s0).out(o0)`
+			},{
+				"tabTrigger": "h2",
+				"name": "src",
+				"content": 
+`var H2 = hy5live.hydra('h2', 'synth')
+P5.init(synth.s0)
+// H2.z(2)
+
+H2.pixelDensity(2)
+
+//synth.src(synth.s0).out(synth.o0)`
+			},{
+				"tabTrigger": "bcd_p52hydra",
+				"name": "bcd_p52hydra",
+				"content": 
+`function setup() {
+	createCanvas(windowWidth, windowHeight, WEBGL)
+	angleMode(DEGREES)
+}
+
+function draw() {
+	clear()
+	noFill()
+	strokeWeight(2)
+	stroke(255)
+	rotateX(frameCount / 4)
+	rotateY(frameCount / 3)
+	box(height * .4)
+}
+
+P5.init() // p5 » hydra: s0
+// P5.hide()
+// H.pixelDensity(2)
+
+src(s0)
+	// .modulate(noize(3, .5))\${1}
+	// .modulateScale(osc(8), .4)
+	// .add(src(o0).scale(1), .99)
+	.out()`
+			},{
+				"tabTrigger": "bcd_hydra2p5",
+				"name": "bcd_hydra2p5",
+				"content": 
+`function setup() {
+	createCanvas(windowWidth, windowHeight, WEBGL)
+	angleMode(DEGREES)
+	noStroke()
+}
+
+function draw() {
+	clear()
+
+	H.get() // hydra » p5: h0
+	texture(h0)
+
+	rotateY(frameCount / 3)
+	rotateX(frameCount / 4)
+	box(height / 2)\${1}
+}
+
+P5.init()
+P5.zIndex(1)
+
+// H.hide()
+
+gradient(1)
+	.blend(noize().scale(1.1))
+	.modulateScale(noize(), .2)
+	// .add(src(s0).scale(.3), .5)
+	.out()`
+			},
+			
+		], "javascript")
+
+			
+		}
+
+		function listCommands(){
+			let cmds = editor.commands.commands;
+			let k = [];
+			for (let cmd in cmds){
+				k.push(cmd.name + ' = ' + cmd.bindKey);
+			}
+			console.log(cmds)
+		}
+
+		function setEditorCommands(){
+
+			// editor.commands.addCommand({
+			//     name: 'removeE',
+			//     bindKey: { win:'Ctrl-E',mac:'Ctrl-E'},
+			//     exec: function(){
+			//        // console.log('override')
+			//     }
+			// });
+
+			// editor.commands.removeCommand("gotolineend")
+			// editor.commands.removeCommand("transposeletters")
+
+			// fix command issues
+			editor.commands.removeCommands([
+				'backspace' // ctrl + h
+				,'gotoleft' // ctrl + f
+				,'gotoright' // ctrl + f
+				,'golineup' // ctrl + p mac
+				,'golinedown' // ctrl + n
+				,'gotolinestart' // ctrl + a
+				,'gotolineend' // ctrl + e
+				,'jumptomatching' // ctrl + p windows
+				,'splitline' // ctrl + o (totally removed)
+				,'transposeletters' // ctrl + t (totally removed)
+			]);
+
+			// editor.commands.bindKey("ctrl-e", null)
+
+
+			editor.commands.bindKeys({"ctrl-l":null, "left":null})  // or
+			// editor.commands.bindKey("ctrl-t", null)
+
+
+			// replace backspace w/o ctrl + h
+			editor.commands.addCommand({
+				name: 'backspace',
+				bindKey: { win: 'Shift-Backspace|Backspace', mac: 'Ctrl-Backspace|Shift-Backspace|Backspace' },
+				exec: function(e) { e.remove('left') },
+				multiSelectAction: 'forEach',
+				scrollIntoView: 'cursor'
+			});
+
+			// replace gotoright w/o ctrl + f
+			editor.commands.addCommand({
+				name: 'gotoright',
+				bindKey: { win: 'Right', mac: 'Right' },
+				exec: function(e,t) { e.navigateRight(t.times) },
+				multiSelectAction: 'forEach',
+				scrollIntoView: 'cursor',
+				readOnly:!0
+			});
+
+			// replace gotoleft w/o ctrl + b
+			editor.commands.addCommand({
+				name: 'gotoleft',
+				bindKey: { win: 'Left', mac: 'Left' },
+				exec: function(e,t) { e.navigateLeft(t.times) },
+				multiSelectAction: 'forEach',
+				scrollIntoView: 'cursor',
+				readOnly:!0
+			});
+
+			// replace golineup w/o ctrl + p
+			editor.commands.addCommand({
+				name: 'golineup',
+				bindKey: { win: 'Up', mac: 'Up' },
+				exec: function(e,t) { e.navigateUp(t.times) },
+				multiSelectAction: 'forEach',
+				scrollIntoView: 'cursor',
+				readOnly:!0
+			});
+
+			// replace golinedown w/o ctrl + n
+			editor.commands.addCommand({
+				name: 'golinedown',
+				bindKey: { win: 'Down', mac: 'Down' },
+				exec: function(e,t) { e.navigateDown(t.times) },
+				multiSelectAction: 'forEach',
+				scrollIntoView: 'cursor',
+				readOnly:!0
+			});
+
+			// replace gotolinestart w/o ctrl + a
+			editor.commands.addCommand({
+				name: "gotolinestart",
+				description: "Go to line start",
+				bindKey: { win: 'Alt-Left|Home', mac: 'Command-Left|Home' },
+				exec: function(editor) { editor.navigateLineStart(); },
+				multiSelectAction: "forEach",
+				scrollIntoView: "cursor",
+				readOnly: true
+			});
+
+			// replace gotolineend w/o ctrl + e
+			editor.commands.addCommand({
+				name: "gotolineend",
+				description: "Go to line end",
+				bindKey: { win: 'Alt-Right|End', mac: 'Command-Right|End' },
+				exec: function(editor) { editor.navigateLineEnd(); },
+				multiSelectAction: "forEach",
+				scrollIntoView: "cursor",
+				readOnly: true
+			});
+
+			// replace jumptomatching w/o ctrl + p
+			editor.commands.addCommand({
+				name: "jumptomatching",
+				description: "Jump to matching",
+				bindKey: { win: 'Ctrl-\\', mac: 'Command-\\' },
+				exec: function(editor) { editor.jumpToMatching(); },
+				multiSelectAction: "forEach",
+				scrollIntoView: "animate",
+				readOnly: true
+			});
+		}
+
+		function setCursor(val){
+			hy5live.settings.cursor = val
+			settingsSet()
+			var cursor = hy5live.settings.cursor ? `cursor:none !important;` : `cursor:crosshair !important;`
+
+			var style = document.createElement('style');
+			style.textContent = `canvas{${cursor}}`
+			hy5live.frameContent.document.head.appendChild(style);
+		}
+
+		function setFontsize(val){
+			hy5live.settings.fontsize = val
+			settingsSet()
+			document.getElementById('hy5live-code').style.fontSize = hy5live.settings.fontsize + 'pt'
+		}
+		
+		function initAPI(){
+			let secHTML = []
+			for(let sec of hydraAPI){
+				let methodHTML = []
+				for(let method of sec.methods){
+					methodHTML.push(`<div class="api-method" data-tip="${method.detail}" data-tip-left>${method.name}</div>`)
+				}
+				secHTML.push(`
+					<div class="api-sec">
+						<div class="api-sec-header">${sec.type}</div>
+						<div class="api-sec-methods">${methodHTML.join('')}</div>
+					</div>
+				`)
+			}
+			apiContents.innerHTML = secHTML.join('')
+			watchTips(apiContents)
+		}
+		
+
+		function initCode(){
+			let initCode = hy5live.settings.initCode
+
+			if(localStorage.getItem('gallery') != null){
+				hydraFiles.gallery.get()
+				toggleElm('gallery')
+				initCode = null
+			}
+
+			if(localStorage.getItem('sketches') != null){
+				hydraFiles.sketches.get()
+				// toggleElm('sketches')
+				initCode = null
+			}
+
+			if(localStorage.getItem('demos') != null){
+				hydraFiles['demos'].get()
+				// toggleElm('sketches')
+				// initCode = null
+			}
+
+			// current temp code
+			if(localStorage.getItem('hy5.temp') != null){
+				initCode = JSON.parse(localStorage.getItem('hy5.temp'))
+			}
+
+			// fresh start if first time/new
+			if(initCode != null){
+				editor.setValue(initCode, 1)
+				recompile()
+			}
+		}
+
+		function initElms(){
+			hy5Editor.style.display = 'block'
+			gui.style.display = 'block'
+			api.style.display = 'none'
+			gallery.style.display = 'none'
+			settings.style.display = 'none'
+
+		}
+		
+		function initSketch(){
+			// clearFiles()
+			// hydraSettings.hydraSketch = null
+			// hy5live.sketch = null
+			hydraFiles.gallery.clear()
+			editor.setValue(hy5live.settings.initCode, 1) // +'\n'
+			editor.focus()
+			hydraInit = false
+			gallery.style.display = 'none'
+			activeClear()
+			recompile()
+		}
+	
+
+		let keyMap = [];
+		window.onkeydown = function(event) {
+			keyMap[event.keyCode] = event.type == 'keydown';
+			if(keyMap[16] && keyMap[17]){
+				event.preventDefault();
+			}
+		}
+
+		window.onkeyup = function(event) {
+			keyMap[event.keyCode] = event.type == 'keydown';
+		}
+
+		// Editor Interactions
+		hy5Code.onkeydown = function(event) {
+			keyMap[event.keyCode] = event.type == 'keydown';
+		}
+
+		hy5Code.onkeyup = function(event) {
+			keyMap[event.keyCode] = event.type == 'keydown';
+		};
+
+		window.onblur = function () {
+			// deactivate modifier keys
+			// setTimeout(clearKeys, 0)
+		}
+
+		window.onfocus = function () {
+			// deactivate modifier keys
+			// setTimeout(clearKeys, 0)
+		}
+
+		window.addEventListener("resize", (event) => {
+			initTips()
+			clearKeys()
+		});
+
+		function initShortcuts(){
+			// Mousetrap.reset();
+			// Mousetrap.pause();
+			for(var s of shortcuts){
+				Mousetrap.bind(s.key, s.func).stopCallback = function(e, element, combo) {};
+			}
+			// Mousetrap.unpause();
+			
+		}
+
+		function clearKeys(){
+			Object.keys(keyMap).forEach(v => keyMap[v] = false)
+			keyMap[16] = false
+			keyMap[17] = false
+		}
+
+		function adjustLines(){
+			let pcode = hy5Editor.getElementsByClassName('ace_line');
+			for(let i=0; i < pcode.length; i++){
+				let pitem = pcode[i];
+				if(pitem.getElementsByClassName( 'ace_line_bg' ).length < 1){
+					let pcontents = pitem.innerHTML;
+					pitem.innerHTML = '<span class="ace_line_bg">' + pcontents + '</span>';
+				}
+			}
+		}
+
+	// Prevent default behavior for the drop event
+		dropArea.addEventListener('dragover', (e) => {
+			e.preventDefault();
+		});
+
+	// Handle the dropped file
+		dropArea.addEventListener('drop', (e) => {
+			e.preventDefault();
+			if(e.dataTransfer.files.length == 1){
+				const reader = new FileReader();
+				const file = e.dataTransfer.files[0];
+				
+				if(file){
+					if(file.type === "application/json"){
+						reader.onload = (event) => {
+							const hy5Import = JSON.parse(event.target.result)
+							// console.log(hy5Import)
+							if(hy5Import.hasOwnProperty('app') && hy5Import.app === 'HY5LIVE'){
+								sketchImport(hy5Import.files)
+
+								
+							}
+						}
+					}else{
+						// clearFiles()
+						hydraFiles.gallery.clear()
+						gallery.style.display = 'none'
+					
+						reader.onload = (event) => {
+							const fileContents = event.target.result
+						// editor.setValue(fileContents, 1)
+						// editor.renderer.updateFull();
+						// setHydra(fileContents)
+						// hydraInit = true
+							parseHydra(fileContents)
+						}
+					}
+
+					reader.readAsText(file)
+				}
+			}else{
+				const files = e.dataTransfer.files
+				if(files.length > 1){
+					hydraFiles.gallery.files = []
+					var filesCount = files.length
+					var filesCounter = 0
+					for(f of files){
+						var reader = new FileReader();
+						reader.onload = (function(theFile){
+							var fileName = theFile.name;
+							return function(e){
+								hydraFiles.gallery.add(theFile.name, e.target.result)
+								filesCounter++
+								if(filesCounter == filesCount){
+									hydraFiles.gallery.init()
+								}
+							};
+						})(f);   
+						reader.readAsText(f);
+					}
+				}
+			}
+		});
+
+		
+		function randomFiles(files){
+			hydraFiles[files].random()
+		}
+
+		function activeClear(){
+			let docfiles = document.getElementsByClassName('file')
+			for(let f of docfiles){
+				f.classList.remove('active')
+			}
+		}
+
+		function sketchRename(hf, index){
+			var sketchName = hydraFiles[hf].files[index].name
+			modal({
+				title: 'RENAME SKETCH',
+				body: `<input id="input-rename" type="text" value="${sketchName}">`,
+				buttons: [
+					{
+						text:'CANCEL',
+						click:()=>{toggleElm('modal')}
+					}, {
+						text:'RENAME',
+						default:true,
+						click:()=>{
+							var inputRename = document.getElementById('input-rename')
+							if(inputRename.value != ''){
+								hydraFiles[hf].files[index].name = inputRename.value
+								hydraFiles[hf].set()
+								hydraFiles[hf].render()
+							}
+							toggleElm('modal')
+						}
+					}
+				],
+				onload:()=>{
+					modelSmall()
+					var inputRename = document.getElementById('input-rename')
+					inputRename.select()
+				}
+			})
+		}
+
+		function sketchRemove(hf, index){
+			//console.log(hf)
+			var sketchName = hydraFiles[hf].files[index].name
+			modal({
+				title: 'REMOVE SKETCH',
+				body: `<p>Are you sure you want to remove:</p><span style="font-size:1.5em;">${sketchName}</span>`,
+				buttons: [
+					{
+						text:'CANCEL',
+						default:true,
+						click:()=>{toggleElm('modal')}
+					}, {
+						text:'REMOVE',
+						click:()=>{
+							hydraFiles[hf].remove(index)
+							toggleElm('modal')
+							// initSketch()
+						}
+					}
+				],
+				onload:()=>{
+					modelSmall()
+				}
+			})
+		}
+
+		function sketchSave(hf){
+			var tempName = editor.session.getLine(0)
+			if(tempName.substring(0, 2) == '//'){
+				tempName = tempName.substring(2).trim()
+			}else{
+				tempName = ''
+			}
+			// if(editor.session.getLine(0))
+			modal({
+				title: 'SAVE SKETCH', 
+				body: `<p>What should we call this sketch?</p>
+				<input id="modal-save" tyle="text" name="modal-save" placeholder="sketch name" value="${tempName}">
+				`,
+				buttons: [
+					{
+						text:'CANCEL',
+						click:()=>{toggleElm('modal')}
+					}, {
+						text:'SAVE',
+						default:true,
+						click:()=>{
+							let tempName = modalValue('modal-save')
+							if(tempName == ''){
+								document.getElementById('modal-save').focus()
+							}else{
+								var checkCodeName = editor.session.getLine(0)
+								if(checkCodeName.substring(0, 2) !== '//'){
+									editor.session.insert({row:0,column:0} , `//${tempName}\n`);
+								}
+								hydraFiles[hf].add(tempName, editor.getValue())
+								hydraFiles[hf].render()
+								toggleElm('modal')
+							}
+
+							// hy5live.log()
+						}//`hy5live.log(modalValue('modal-save'))`
+					}
+				],
+				onload: ()=>{
+					modelSmall()
+					document.getElementById('modal-save').select()
+				}
+			})
+				
+			// hydraFiles.sketches.add(sketchName, editor.getValue())
+		}
+
+		function sketchTrash(){
+
+		}
+
+		function sketchImport(files){
+			var tempImport = {
+				all: files,
+				filter: [],
+				list: []
+			}
+
+			for(let f of files){
+				if (hydraFiles.sketches.files.some(e => e.name === f.name)) {
+					tempImport.list.push(`<div class="import-file import-dup">${f.name}</div>`)
+				}else{
+					tempImport.filter.push(f)
+					tempImport.list.push(`<div class="import-file">${f.name}</div>`)
+				}
+			}
+
+			modal({
+				title: 'IMPORT SKETCHES',
+				body: `
+					<div><input id="import-checkbox" type="checkbox"></input> Skip Duplicates?</div>
+
+					<div style="position:absolute;height:80%;width:100%;overflow:auto;">
+						<div>${tempImport.list.join('')}</div>
+					</div>
+				`,
+				buttons: [
+					{
+						text:'CANCEL',
+						default:true,
+						click:()=>{toggleElm('modal')}
+					}, {
+						text:'IMPORT',
+						click:()=>{
+							let addFiles = tempImport.all
+							if(document.getElementById('import-checkbox').checked){
+								addFiles = tempImport.filter
+							}
+							addFiles.reverse()
+							for(let f of addFiles){
+								hydraFiles.sketches.add(f.name, f.code, false)
+							}
+							hydraFiles.sketches.render()
+							toggleElm('modal')
+						}
+					}
+				],
+				onload:()=>{
+					//modelSmall()
+					document.getElementById('import-checkbox').addEventListener('change', (e)=>{
+						if(e.target.checked){
+							document.querySelectorAll('.import-dup').forEach((dup) => { 
+								dup.style.display = 'none'
+							 });
+						}else{
+							document.querySelectorAll('.import-dup').forEach((dup) => { 
+								dup.style.display = 'block'
+							 });
+						}
+					})
+				}
+			})
+		}
+
+		// function parseCode(files, index){
+		// 	let tempFiles = hydraFiles[files]
+		// 	tempFiles.parseCode(index)
+		// }
+
+		// function parseCode(index){
+		// 	parseHydra(hydraGallery[index].code)
+		// 	let files = document.getElementsByClassName('file')
+		// 	for(let f of files){
+		// 		f.classList.remove('active')
+		// 	}
+		// 	files[index].classList.add('active')
+		// 	files[index].classList.add('viewed')
+		// 	purgeView(index)
+		// }
+
+		// P5LIVE
+		function removeComments(code){
+			return code.replace(/\/\*[\s\S]*?\*\/|([^:\}\)]|^)\/\/.*$/gm, (_, g1, g2) => Array(_.split('\n').length).join('\n'))
+		}
+
+
+		function recompile(force = false){
+			hy5live.log(`recompile()\n– force: ${force}\n– hydraInit: ${hydraInit}\n– programmedChanged: ${programmedChange}`)
+			if(programmedChange){ // editor.getValue() == '' || 
+				saveHydra()
+				hydraInit = false
+				programmedChange = false
+			}
+
+			getVars()
+
+			if(hydraInit || force){
+				try {
+					let rawLines = editor.session.getLines(0, editor.session.getLength());
+					let currline = editor.getSelectionRange().start.row;
+					let currCode = editor.session.getLine(currline);
+
+					// search +/- cur pos for new lines
+					let block = currCode
+					let start = currline
+					let end = currline
+					
+					// catch p5 code change, prevent hydra
+					hy5live.log('checking softcompile')
+					if(softCompileCheck() == 1){
+						hy5live.log('softCompile')
+						return false
+					}else{
+						hy5live.log('no softCompile')
+					}
+					
+					// grab blocks
+					let i = currline-1
+
+					while(i >= 0 && rawLines[i].trimStart() != ''){
+						block = editor.session.getLine(i)+ '\n' + block
+						start--
+						i--
+					}
+					
+					i = currline+1
+					while(i < rawLines.length && rawLines[i].trimStart() != ''){
+						block += '\n' + editor.session.getLine(i)
+						end++
+						i++
+					}
+
+					// compile all if forced
+					if(force){
+						block = editor.getValue()
+						start = 0
+						end = editor.session.getLength()
+					}
+
+					hy5live.log('eval\n'+block)
+
+					recompilePulse(start, end)
+					// block = checkLoopBreaker(block)
+
+					if(!editor.getValue().match(/(\/\/).*(no.*protect)/gm)){
+						try{
+							block = loopBreaker(block).code;
+						} catch (e) {
+							console.log(`👀 error found near line ~ ${e.lineNumber}`);
+							// console.log(e.description)
+						  return false;
+						}
+					}
+
+					hy5live.frameContent.evalCode(block)	
+					saveHydra() // only save if compiled!
+					
+					// hydraEval(block, start, end)
+					// hy5live.frameContent.eval(editor.getValue())
+					// bug.style.display = 'none'
+					// bugMsg.innerHTML = ''
+				} catch (e) {
+					// hy5live.log("logging", e)
+					// hy5live.log('compile error')
+					// bugMsg.innerHTML = e
+					// bug.style.display = 'flex'
+				}
+			}else{
+				try{
+					setHydra(editor.getValue())
+					recompilePulse()
+					// syncVars()
+					// setTimeout(()=>{syncVars()}, 1000)
+				}catch(e){
+					hy5live.log(e)
+				}
+			}
+		}
+
+		// hy5live.frameContent.onerror = function(){
+		// 	    alert('error!!');
+		// 	    // return false;
+		// 	}
+
+		function recompileSelection(start, end){
+			hy5live.log('recompileSelection')
+			let block = editor.session.getLines(start, end).join('\n');
+			try{
+				recompilePulse(start, end)
+				// block = checkLoopBreaker(block)
+
+				if(!editor.getValue().match(/(\/\/).*(no.*protect)/gm)){
+					try{
+						block = loopBreaker(block).code;
+					} catch (e) {
+						console.log(`👀 error found near line ~ ${e.lineNumber}`);
+						// console.log(e.description)
+					  return false;
+					}
+				}
+
+				hy5live.frameContent.evalCode(block)
+				saveHydra() // only save if compiled!
+				// hy5live.frameContent.rebuildP5()
+				// bug.style.display = 'none'
+				// bugMsg.innerHTML = ''
+			}catch(e){
+				hy5live.log('compile error')
+				hy5live.log(e)
+				// bugMsg.innerHTML = e
+				// bug.style.display = 'flex'
+			}
+		}
+
+		function softCompileCheck(){
+			let currline = editor.getSelectionRange().start.row;
+			let currCode = editor.session.getLine(currline);
+			curPos = editor.getCursorPosition();
+
+			let codeNoComments = removeComments(editor.getValue());
+			let rawLines = editor.session.getLines(0, editor.session.getLength());
+			let drawPos = [];//{};
+			let drawPosSel = -1;
+			let countBrackets = false;
+			let braces = 0;
+			let softFunction = false;
+			let softClass = false;
+
+
+			let allLines = codeNoComments.split('\n');
+
+			// extract all functions and their line number
+			for(let i=0; i<allLines.length; i++){
+
+				// catch function or class
+				if(allLines[i].includes('function ') && !countBrackets){
+						countBrackets = true;
+						let functionName = allLines[i].match(/function ([\w\d]*)\(/)[1].trim();
+						drawPos.push({type:'function', name:functionName, start:i});
+				}else if(allLines[i].includes('class ') && !countBrackets){
+						countBrackets = true;
+						let className = allLines[i].match(/class\s([\w\d]*)/)[1].trim();
+						drawPos.push({type:'class', name:className, start:i});
+				}
+
+				// count {} and mark where class/function ends
+				if(countBrackets){
+					if(allLines[i].includes('{')){
+						braces += (allLines[i].match(/{/g) || []).length;
+					}
+					if(allLines[i].includes('}')){
+						braces -= (allLines[i].match(/}/g) || []).length;
+						if(braces == 0){
+							drawPos[drawPos.length-1].end = i;
+							countBrackets = false;
+						}
+					}
+				}
+			}
+
+			let p5block = -1
+
+			// check all changed positions + if custom function
+			let funName = '';
+			for(let i=0; i<drawPos.length; i++){
+				// for(let j=0; j < curPositions.length; j++){
+					let cPos = curPos //curPositions[j];
+					if(cPos.row >= drawPos[i].start && cPos.row <= drawPos[i].end){
+						p5block = i
+						// block = editor.session.getLines(drawPos[i].start, drawPos[i].end).join('\n');
+						// hy5live.log(drawPos[i].name); // debug where change occured
+						if(drawPos[i].name != 'setup' && drawPos[i].name != 'preload' && drawPos[i].type == 'function'){
+							softFunction = true;
+							drawPosSel = i;
+							funName = drawPos[i].name;
+						}else if(drawPos[i].type == 'class'){
+							softClass = true;
+							drawPosSel = i;
+						}else{
+							hydraInit = true
+							// recompile()
+							hy5live.log('setup')
+
+							// force recompile on setup/preload
+							hydraInit = false
+							recompile()
+
+							// previous ignored that...
+							// let compileRange = editor.getSelectionRange()//.start.row
+							// recompileSelection(compileRange.start.row, compileRange.end.row)
+							
+							return false // *** keep or remove??
+						}
+					}
+				// }
+			}
+
+			// if custom function, grab where it's used
+			let functionPos = [];
+			for(let j=0; j<drawPos.length; j++){
+				if(funName == drawPos[j].name){
+					// find lines where drawPos[i].name sits
+					for(let i=0; i<allLines.length; i++){
+						if(allLines[i].includes(drawPos[j].name + '(')){
+							functionPos.push(i);
+						}
+					}
+				}
+			}
+
+			// catch custom functions in preload + setup
+			for(let i=0; i < functionPos.length; i++){
+				let fPos = functionPos[i];
+				for(let j=0; j < drawPos.length; j++){
+					if(fPos >= drawPos[j].start && fPos <= drawPos[j].end){
+						// hy5live.log(drawPos[i].name); // debug where chage occured
+						if(drawPos[j].name == 'setup' || drawPos[j].name == 'preload'){ // && !settings.cocoding.active
+							softFunction = false;
+						}
+					}
+				}
+			}
+
+			// change in p5 block, check if setup exists
+			if(p5block != -1){
+				if(hy5live.frameContent.setup !== undefined){
+					recompileSelection(drawPos[p5block].start, drawPos[p5block].end)					
+				}else{
+					hydraInit = false
+					recompile()
+				}
+				return 1
+			}else{
+				return 0
+			}
+
+			// if possible, only overwrite function/class for softCompile
+			// if(softClass || softFunction){
+			// 	softCompile(drawPos[drawPosSel].type, drawPos[drawPosSel].name, drawPos[drawPosSel].start, drawPos[drawPosSel].end);
+			// 	curPositions = [];
+
+				
+			// 	return false; // prevent complete rebuild
+			// }
+		}
+
+		function softCompile(codeType, codeName, codeStart, codeEnd){
+			let curCodeTemp = '';
+			if(codeType == 'function'){
+				curCodeTemp = editor.session.getLines(codeStart, codeEnd).join('\n');
+			}else if(codeType == 'class'){
+				curCodeTemp = codeName + ' = class {' + editor.session.getLines(codeStart+1, codeEnd).join('\n');
+			}
+			let s = document.createElement('script');
+			s.type = 'text/javascript';
+
+			s.innerHTML = curCodeTemp;
+			hy5live.frameContent.document.head.appendChild(s);
+			hy5live.log('soft compiling!')
+		}
+
+
+		function checkLoopBreaker(code){
+			if(!editor.getValue().match(/(\/\/).*(no.*protect)/gm)){
+				try{
+					code = loopBreaker(code).code;
+					return code
+				} catch (e) {
+					console.log(`👀 error found near line ~ ${e.lineNumber}`);
+					// console.log(e.description)
+				  return false;
+				}
+			}else{
+				return code
+			}
+		}
+
+		
+		function recompilePulse(s = 0, e = editor.session.getLength()){
+			markerID.push({id:editor.session.addMarker(new Range(s, 0, e, 9000), "ace_marker", "text")})
+			setTimeout(removeMarkers, 300)
+		}
+
+		function removeMarkers(){
+			for(let i=0; i < markerID.length; i++){
+				editor.session.removeMarker(markerID[i].id);
+			}
+			markerID = [];
+		}
+
+		function saveScreenshot(){
+			hy5live.frameContent.screencap()
+			const text = editor.getValue()
+			const data = new Blob([text], {type: 'text/plain'});
+			const a = document.createElement('a')
+			a.style.display = 'none'
+			let d = new Date()
+			a.download = `hydra-${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}-${d.getHours()}.${d.getMinutes()}.${d.getSeconds()}.js`
+			a.href = URL.createObjectURL(data)
+			a.click()
+
+			setTimeout(() => {
+				window.URL.revokeObjectURL(a.href);
+			}, 300);
+		}
+
+		function parseHydra(code){
+			editor.setValue(code, 1)
+			editor.renderer.updateFull();
+			// hydraInit = true
+			setHydra(code)
+		}
+
+		function saveHydra(code = editor.getValue()){
+			localStorage.setItem('hy5.temp', JSON.stringify(code));
+			setTimeout(()=>{
+				if(diffCode()){
+					document.getElementById('sketches-nav-save').classList.add('pulse')
+					hydraFiles.sketches.activeClear()
+				}else{
+					document.getElementById('sketches-nav-save').classList.remove('pulse')
+				}
+			}, 0)
+		}
+
+		function clearVars(){
+			hy5live.vars = {}
+		}
+
+		function getVars(){
+			if(!hy5live.hasOwnProperty('vars')){
+				hy5live.vars = {}
+			}
+
+			if(hy5live.frameContent.hasOwnProperty('frameCount')){				
+				hy5live.vars.frameCount = hy5live.frameContent.frameCount
+				hy5live.vars.mouseX = hy5live.frameContent.mouseX
+				hy5live.vars.mouseY = hy5live.frameContent.mouseY
+			}
+
+			// if(hy5live.frameContent.hasOwnProperty('time')){
+				hy5live.vars.time = hy5live.frameContent.time
+			// }
+		}
+
+		function syncVars(){
+			// hy5live.log(hy5live.vars)
+			if(hy5live.frameContent.hasOwnProperty('setup') && hy5live.hasOwnProperty('vars') && hy5live.vars.hasOwnProperty('frameCount')){
+				hy5live.frameContent.frameCount = hy5live.vars.frameCount
+				hy5live.frameContent.mouseX = hy5live.vars.mouseX
+				hy5live.frameContent.mouseY = hy5live.vars.mouseY
+			}
+
+			if(hy5live.vars.time){
+				hy5live.frameContent.hydra.synth.time = hy5live.vars.time
+			}
+		}
+
+		function diffCode(){
+			if(hydraFiles.sketches.current == null || hydraFiles.sketches.getCode() != editor.getValue()){
+					return true
+			}else{
+				return false
+			}
+		}
+
+		function processLibs(code){
+			let sketchTest = code.replace(/(?:\r\n|\r|\n|\t)/g, '');
+			let sketchScriptsString = sketchTest.match(/(?=loadScripts|libs|scripts).*?(\])/);
+			let scriptsList = [];
+			if(sketchScriptsString != undefined){
+				let sketchLoadScripts = sketchScriptsString[0].match(/(["'])(?:(?=(\\?))\2.)*?\1/g);
+				for(let i=0; i < sketchLoadScripts.length; i++){
+					if(sketchLoadScripts[i] != ''){
+						scriptsList.push(sketchLoadScripts[i].replace(/["']/g, ''));
+					}
+				}
+			}
+			return scriptsList;
+		}
+
+		function setHydra(fileContents){
+			// return false
+
+			let codeNoComments = removeComments(editor.getValue());
+			let scriptsList = processLibs(codeNoComments);
+			let scriptsLoad = []
+			for(let s of scriptsList){
+				scriptsLoad.push(`<script src="${s}"><\/script>`)
+			}
+			scriptsLoad.join('\n')
+
+			if(!fileContents.match(/(\/\/).*(no.*protect)/g)){
+				try{
+					fileContents = loopBreaker(fileContents).code;
+				} catch (e) {
+					console.log(`👀 error found near line ~ ${e.lineNumber}`);
+					// console.log(e.description)
+				  return false;
+				}
+			}
+			var cursor = hy5live.settings.cursor ? `cursor:none !important;` : `cursor:crosshair !important;`
+			hy5live.frame.style.opacity = '0'
+			hy5live.frame.srcdoc = `
+			<html>
+			<head>
+				<script src='includes/js/frameworks/hydra-synth.js'><\/script>
+				<script src="includes/js/frameworks/p5.min.js"><\/script>
+				${scriptsLoad}
+				<style>
+					body{
+						background:#000;
+						margin:0;
+						cursor:crosshair;
+						cursor:none !important;
+					}
+					*{
+						width:100vw;
+						height:100vh;
+						// image-rendering: auto !important;
+					}
+					canvas{
+						${cursor}
+						position:absolute;
+						width:100vw !important;
+						height:100vh !important;
+					}
+					.p5Canvas{
+						position:fixed;
+						top:0;
+						z-index:-1
+					}
+				</style>
+				<script>
+					// P5LIVE - iFrame got focus()?!
+					document.onkeydown = function(event){
+						// on CONTROL, return focus and activate CONTROL
+						if(event.keyCode == 17){
+							window.parent.focus();
+							window.setTimeout(function(){window.parent.dispatchEvent(new KeyboardEvent('keydown',{'keyCode':17}));}, 100);
+						}
+					}
+				<\/script>
+			</head>
+			
+			<body>
+				<script src="includes/js/libs/hy5.js"><\/script>
+
+				<script>
+					var hy5Holder = parent.window
+
+					function windowResized() {
+						resizeCanvas(windowWidth, windowHeight);
+					}
+
+					// window.onerror = (e)=>{
+					// 	hy5Holder.hy5live.bug(e)
+					// }
+
+					function rebuildP5(){
+						if(window.hasOwnProperty('setup')){
+							document.querySelectorAll(".p5Canvas").forEach(el => el.remove());
+							remove();
+							new p5();
+							hy5Holder.syncVars()
+							// console.log('rebuilding p5')
+						}
+						if(P5.prefs.init){
+							P5.init(P5.prefs.src, P5.prefs.canvas)
+						}
+						if(P5.prefs.hide){
+							P5.hide(0)
+						}
+						if(P5.prefs.zIndex){
+							P5.zIndex(P5.prefs.zIndex)
+						}
+						if(H.prefs.pixelDensity){
+							H.pixelDensity(H.prefs.pixelDensity)
+						}
+					}
+
+					function evalCode(code){
+						
+						try{
+							hy5Holder.syncVars()
+							window.eval(code)
+							hy5Holder.hy5live.bug('')
+							hy5Holder.bug.style.display = 'none'
+							hy5Holder.bugMsg.innerHTML = ''
+							if(hy5Holder.hy5live.hasBug){
+								rebuildP5()
+								hy5Holder.hy5live.hasBug = false
+							}
+						}catch(e){
+							// console.log(e)
+							hy5Holder.hy5live.bug(e)
+						}
+					}
+
+					window.addEventListener('error', function(e) {
+						console.log('error')
+						hy5Holder.hy5live.bug(e)
+					});
+
+					window.onunhandledrejection = (e)=>{
+						// console.log(e.reason)
+						hy5Holder.hy5live.bug(e.reason)
+					}
+
+					// *** optional always hidden
+					// (function() {
+					// 	    var mouseTimer = null, cursorVisible = true;
+
+					// 	    function disappearCursor() {
+					// 	    	// console.log('hiding cursor')
+					// 	        mouseTimer = null;
+					// 	        document.body.style.cursor = "none";
+					// 	        cursorVisible = false;
+					// 	    }
+
+					// 	    document.onmousemove = function() {
+					// 	    	// console.log('tracking cursor')
+
+					// 	        if (mouseTimer) {
+					// 	            window.clearTimeout(mouseTimer);
+					// 	        }
+					// 	        if (!cursorVisible) {
+					// 	            // document.body.style.cursor = "crosshair";
+					// 	            cursorVisible = true;
+					// 	        }
+					// 	        mouseTimer = window.setTimeout(disappearCursor, 500);
+					// 	    };
+					// 	})();
+
+					
+
+					// pass console.log's to parent
+					// https://stackoverflow.com/questions/7042611/override-console-log-for-production#comment121220200_7042634
+					var pmsg = ''
+					var console = console || {}; console.log = function(m){
+						// only send to window console if unique!
+						if(m != pmsg){
+							window.parent.console.log(m); // also send to parent console!
+							window.parent.hy5live.console(m); // also send to parent console!
+							pmsg = m;
+						}
+					};
+
+
+					${fileContents}
+				<\/script>
+			</body>
+			</html>
+			`;
+
+			hy5live.frame.onload = ()=>{
+				hy5live.log('setHydra')
+				hydraInit = true;
+				saveHydra()
+				syncVars()
+				hy5live.frame.style.opacity = 1 // *** strange flickr...
+			}
+		}
+
+		
+
+		/* P5LIVE iFrame magic */
+
+		// get mouse clicks on top
+		// initially inspired from here:
+		// https://stackoverflow.com/a/44143731/10885535
+		window.addEventListener('mousemove', passMouseClick);
+		window.addEventListener('mouseup', passMouseClick);
+		window.addEventListener('mousedown', passMouseClick);
+
+
+		let pass = false;
+		function passMouse(event){
+			pass = !pass;
+			if (pass) {
+				processMouse(event);
+			}
+		};
+
+		function passMouseClick(event){
+			processMouse(event);
+		};
+
+		let mouseFields = ['altKey', 'clientX', 'clientY', 'composed', 'ctrlKey', 'isTrusted', 'layerX', 'layerY', 'metaKey', 'movementX', 'movementY', 'offsetX', 'offsetY', 'pageX', 'pageY', 'screenX', 'screenY', 'shiftKey', 'x', 'y', 'button', 'buttons', 'relatedTarget', 'region'];
+
+		function getOpts(event, fields){
+			let opts = {};
+				fields.forEach(function(f) {
+					if (f in event) {
+						opts[f] = event[f];
+					}
+				});
+			return opts;
+		}
+
+		function processMouse(event){
+			let opts = getOpts(event, mouseFields);
+			let copy = new MouseEvent(event.type, event);
+			if(hy5Editor.style.display != 'none'){
+				hy5live.frameContent.dispatchEvent(copy);
+			}
+
+			// prevent drag+drop+shift of code, while mouseDragging visuals
+			if(event.type == 'mousedown'){
+				editor.setReadOnly(true);
+			}else if(event.type == 'mouseup'){
+				editor.setReadOnly(false);
+			}
+
+		}
+
+		// pass keys on down
+		// tips: https://stackoverflow.com/questions/596481/
+		window.addEventListener('keydown', sendKey);
+		window.addEventListener('keyup', sendKey);
+
+		let keyFields = ['altKey', 'bubbles', 'cancelBubble', 'cancelable', 'charCode', 'code', 'composed', 'ctrlKey', 'isTrusted', 'key', 'keyCode', 'location', 'metaKey', 'repeat', 'returnValue', 'shiftKey', 'type', 'which'];
+
+
+		function sendKey(event){
+			let opts = getOpts(event, keyFields);
+			let copy = new KeyboardEvent(event.type, event);
+
+			if(hy5Editor.style.visibility == 'none'){
+					hy5live.frameContent.dispatchEvent(copy);
+			}else{
+				hy5live.frameContent.dispatchEvent(copy);
+			}
+		}
+
+
+
+		// DRAGGABLE
+		// replace? w/ https://github.com/anseki/plain-draggable
+		// Make the DIV element draggable:
+		dragElement(document.getElementById("gui"));
+
+		function dragElement(elmnt) {
+		  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+		  if (document.getElementById(elmnt.id + "-header")) {
+			// if present, the header is where you move the DIV from:
+			document.getElementById(elmnt.id + "-header").onmousedown = dragMouseDown;
+		  } else {
+			// otherwise, move the DIV from anywhere inside the DIV:
+			elmnt.onmousedown = dragMouseDown;
+		  }
+
+		  function dragMouseDown(e) {
+			e = e || window.event;
+			e.preventDefault();
+			// get the mouse cursor position at startup:
+			pos3 = e.clientX;
+			pos4 = e.clientY;
+			document.onmouseup = closeDragElement;
+			// call a function whenever the cursor moves:
+			document.onmousemove = elementDrag;
+			clearTips()
+		  }
+
+		  function elementDrag(e) {
+			e = e || window.event;
+			e.preventDefault();
+			// console.log(elmnt.clientWidth)
+			// calculate the new cursor position:
+			pos1 = pos3 - e.clientX;
+			pos2 = pos4 - e.clientY;
+			pos3 = e.clientX;
+			pos4 = e.clientY;
+			// set the element's new position:
+			elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+			elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+		  }
+
+		  function closeDragElement() {
+			// stop moving when mouse button is released:
+			document.onmouseup = null;
+			document.onmousemove = null;
+			initTips()
+		  }
+		}
+
+
+		// AUTOCOMPLETE
+		function loadAutoComplete(acOBJ){
+			// propose trimmed list/script to https://github.com/processing/p5.js/issues/3666
+			let acList = [];
+			let curFunction = '';
+
+			// cycle through auto complete list
+			acOBJ.code.forEach(function (ac){
+
+				// if method/function
+				if(ac.t == 'm'){
+					// add once without params for easy adding
+					if(ac.n != curFunction){
+						acList.push({'cap':ac.n + '()', 'snip':ac.n + '()'});
+						curFunction = ac.n;
+					}
+
+					// add w/ params using tab feature
+					let acParamsTab = []
+					for(let i=0; i < ac.p.length; i++){
+						acParamsTab.push('${'+(i+1)+':'+ac.p[i]+'}');
+					}
+					let acParamsListTab = ac.n + '(' +acParamsTab.join(', ')+ ')';
+					let acParamsList = ac.n + '(' +ac.p.join(', ')+ ')';
+					acList.push({'cap':acParamsList, 'snip':acParamsListTab});
+				}else{
+					// add constants/misc
+					acList.push({'cap':ac.n, 'snip':ac.n});
+				}
+			});
+
+			// create custom completer
+			var completer = {
+				getCompletions: function(editor, session, pos, prefix, callback) {
+					var text = editor.getValue(); if (prefix.length === 0) { callback(null, []); return }
+					var completions = [];
+					for(let wl of acList){
+						completions.push({caption: wl.cap, snippet: wl.snip, meta: 'hydra', score:1});
+					}
+					callback(null, completions);
+				}
+			}
+
+			// add list to auto completer
+			langTools.addCompleter(completer);
+		}
+
+
+		// TIDY CODE
+		let beautifyOptions = {
+			'indent_size': '1',
+			'indent_char': '\t',
+			'max_preserve_newlines': '5',
+			'preserve_newlines': true,
+			'keep_array_indentation': false,
+			'break_chained_methods': true,
+			'indent_scripts': 'normal',
+			'brace_style': 'collapse',
+			'space_before_conditional': false,
+			'unescape_strings': false,
+			'jslint_happy': false,
+			'end_with_newline': false,
+			'wrap_line_length': '0',
+			'indent_inner_html': false,
+			'comma_first': false,
+			'e4x': false
+		}
+
+		function tidyCode(aceEdit){
+			let tempPos = aceEdit.getCursorPosition();
+			let tempCode = js_beautify(aceEdit.getValue(), beautifyOptions);
+			aceEdit.setValue(tempCode, 1);
+			aceEdit.gotoLine(tempPos.row+1, tempPos.column, false);
+		}
+
+
+		// TOOLTIPS
+		function clearTips(){
+			// purge previous for dynamic render
+			Array.from(document.querySelectorAll('.tooltip')).forEach(el => {
+				el.remove()
+			})
+		}
+
+		function initTips(){
+			// purge previous for dynamic render
+			Array.from(document.querySelectorAll('.tooltip')).forEach(el => {
+				el.remove()
+			})
+
+			// ignore if false
+			// if(!cc.settings.tooltips){
+			// 	return
+			// }
+
+			// built upon: https://stackoverflow.com/a/69340293/10885535
+			Array.from(document.querySelectorAll('[data-tip]')).forEach(el => {
+				// tip
+				let tip = document.createElement('div');
+				tip.classList.add('tooltip');
+				tip.innerText = el.getAttribute('data-tip');
+				document.body.appendChild(tip);
+
+				// arrow
+				let arrow = document.createElement('div');
+				arrow.classList.add('tooltip-arrow')
+				tip.appendChild(arrow)
+
+				// position tip + arrow once added
+				setTimeout(()=>{
+					let elmPos = el.getBoundingClientRect()
+					let tipPos = tip.getBoundingClientRect()
+					let tipLeft = elmPos.left + (elmPos.width - tipPos.width)/2
+					let tipTop = elmPos.bottom + 5
+					let arrowLeft = tipPos.width/2 - 5
+					let arrowTop = -4
+
+					if(el.hasAttribute('data-tip-left')){
+						tipLeft = elmPos.left - tipPos.width - 5
+						tipTop = elmPos.top + elmPos.height/2 - tipPos.height/2
+						arrowLeft = tipPos.width - 6
+						arrowTop = tipPos.height/2 - 5
+						arrow.style.borderLeft = 0
+						arrow.style.borderBottom = 0
+					}else if(el.hasAttribute('data-tip-right')){
+						tipLeft = elmPos.right + 5
+						tipTop = elmPos.top + elmPos.height/2 - tipPos.height/2
+						arrowLeft = - 4
+						arrowTop = tipPos.height/2 - 5
+						arrow.style.borderRight = 0
+						arrow.style.borderTop = 0
+					}else{
+						arrow.style.borderRight = 0
+						arrow.style.borderBottom = 0
+					}
+
+					if(tipLeft < 5){
+						tipLeft = 5
+					}
+					tip.style.left = tipLeft + 'px'
+					tip.style.top = tipTop + 'px'
+					arrow.style.left = arrowLeft + 'px'
+					arrow.style.top = arrowTop + 'px'
+				}, 0)
+
+				// toggle with mouse
+				el.onmouseover = e => {
+					// hy5live.log('over')
+					tip.style.opacity = 1
+					tip.style.visibility = 'visible'
+					e.stopPropagation() // stop parent
+				};
+				 el.onmouseout = e => {
+					tip.style.opacity = 0
+					tip.style.visibility = 'hidden'
+				};
+				if (el.matches(':hover')) {
+					tip.style.opacity = 1
+					tip.style.visibility = 'visible'
+				}
+			});
+		}
+
+		var timer = null;
+		function watchTips(elm){
+			elm.addEventListener('scroll', function() {
+				if(timer !== null) {
+					clearTips()
+					clearTimeout(timer);        
+				}
+				timer = setTimeout(function() {
+					initTips()
+				}, 150);
+			}, false);
+		}		
+	</script>
+</body>
+</html>
