@@ -286,7 +286,7 @@ a5.waveEase[] // smoothed wave
 
 ```
 
-## Offline Mode
+## OFFLINE MODE
 You can run the downloaded HY5LIVE folder within any localhost server setup you have, or easily run HY5LIVE offline using nodejs/npm for an `express` webserver.
 
 - [Download HY5LIVE](https://github.com/ffd8/HY5LIVE/archive/refs/heads/main.zip) or [Clone GitHub repo](https://github.com/ffd8/HY5LIVE)
