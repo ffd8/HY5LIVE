@@ -218,8 +218,7 @@
 		if(hy5live.demosLocked){
 			document.getElementById('demos-nav').style.display = 'none'
 		}
-		// hydraFiles.gallery.navActive = false
-		// hydraFiles.sketches.viewsActive = false
+
 		let hydraGallery = [], hydraView = []
 		
 		hy5live.settings = {
@@ -292,15 +291,11 @@
 				return false;
 			}},
 			{key:'shift+alt+enter', shift:true, func: ()=>{ 
-				// selectionCompile
-				// recompile(true)
-				// recompileSelection()
 				let compileRange = editor.getSelectionRange()//.start.row
 				recompileSelection(compileRange.start.row, compileRange.end.row)
 				return false;
 			}},
 			{key:'shift+ctrl+enter', shift:true, func: ()=>{ 
-				// hardCompile
 				hydraInit = false
 				recompile()
 				return false;
@@ -424,7 +419,6 @@
 				let verrev = '<p>v '+ hy5live.version + ' - r' + hy5live.revision+'<br>';
 				markedReadme = markedReadme.replace(/(<p>).+?(<br>)/, verrev);
 				markedReadme = markedReadme.replace(`hydra 🙏 p5.js live-coding environment!`, `<div style="text-align:center;width:330px;"><span class="pulse-slow">HY</span>DRA <img src="includes/images/hy5-left.png" height="20px"><span class="hifive"></span><img src="includes/images/hy5-right.png" height="20px"> P<span class="pulse-slow">5</span> live-coding environment!</div>`); // <p[^>]*> // [v-\d].*<br>cc
-				// let p5liveabout = '<div id="about-alert" class="vex-long">'+markedReadme+'</div>';
 
 				hy5live.about = markedReadme
 				
@@ -592,7 +586,6 @@
 						}else{
 							hydraFiles[hf].update(sketchSel, inspectEditor.getValue())
 						}
-						// hydraFiles[hf].files[sketchSel].code = inspectEditor.getValue()
 						btns.save.classList.remove('pulse-slow')
 						btns.reset.style.opacity = .5
 					}
@@ -634,32 +627,20 @@
 			m.body.innerHTML = opts.body
 			m.buttons.innerHTML = ''
 			for(let b of opts.buttons){
-				// m.buttons.innerHTML += `<button onclick="${b.click}">${b.text}</button>`	
 				var o = document.createElement('button')
 				o.innerHTML = b.text
 				o.onclick = ()=>{b.click()}
 				if(b.default){
 					m.window.addEventListener("keyup", (event) => {if (event.key === "Enter") {event.preventDefault(); b.click() } })
-
-					// m.window.onkeyup = (event)=>{
-					// 	if (event.key === "Enter") {event.preventDefault(); b.click() } 
-					// }
 					o.classList.add('button-default')
 				}
 				m.buttons.appendChild(o)
-				// o.addEventListener('click', )
 			}
 			toggleElm('modal', true)
 			editor.blur()
 			m.window.focus()
 			if(opts.hasOwnProperty('onload') && opts.onload != ''){opts.onload()}
 		}
-
-		// window.addEventListener('keyup', (e) => {
-		//   if (e.keyCode === 27) {
-		//     toggleElm('modal', false)
-		//   }
-		// })
 
 		function modalValue(name){
 			return document.getElementsByName(name)[0].value
@@ -686,7 +667,6 @@
 			initEditor()
 			initCode()
 			initAPI()
-			// initAbout()
 			initTips()
 			initShortcuts()
 			parseSettings()
@@ -716,8 +696,7 @@
 				let markedReadme = marked(text, markedOptions);
 				let verrev = '<p>v '+ hy5live.version + ' - r' + hy5live.revision+'<br>';
 				markedReadme = markedReadme.replace(/(<p>).+?(<br>)/, verrev);
-				markedReadme = markedReadme.replace(`hydra 🙏 p5.js live-coding environment!`, `<div style="text-align:center;width:330px;"><span class="pulse-slow">HY</span>DRA <img src="includes/images/hy5-left.png" height="20px"><span class="hifive"></span><img src="includes/images/hy5-right.png" height="20px"> P<span class="pulse-slow">5</span> live-coding environment!</div>`); // <p[^>]*> // [v-\d].*<br>cc
-				// let p5liveabout = '<div id="about-alert" class="vex-long">'+markedReadme+'</div>';
+				markedReadme = markedReadme.replace(`hydra 🙏 p5.js live-coding environment!`, `<div style="text-align:center;width:330px;"><span class="pulse-slow">HY</span>DRA <img src="includes/images/hy5-left.png" height="20px"><span class="hifive"></span><img src="includes/images/hy5-right.png" height="20px"> P<span class="pulse-slow">5</span> live-coding environment!</div>`);
 
 				hy5live.about = markedReadme
 
@@ -759,7 +738,6 @@
 				}
 			}
 
-			// if(settings.multitabToggle && settings.editMode){
 				localStorage.openpages = Date.now();
 				var onLocalStorageEvent = function(e){
 					if(e.key == "openpages"){
@@ -783,20 +761,9 @@
 									modalSmall()
 								}
 							})
-
-							// vex.dialog.alert({
-							// 	unsafeMessage:'<span class="pulse">Warning:</span> <br>'+document.title+' open in multiple tabs!<br>Close all but one to avoid data loss.',
-							// 	afterOpen: function(){
-							// 		vexSmall(this.rootEl);
-							// 	},
-							// 	callback: function(){
-							// 		multitabWarning = false;
-							// 	}
-							// });
 					}
 				};
 				setTimeout(function(){window.addEventListener('storage', onLocalStorageEvent, false);}, 0);
-			// }
 		}
 
 		function initSettings(){
@@ -834,7 +801,6 @@
 				for (const [key, value] of Object.entries(tempSettings)) {
 					hy5live.settings[key] = value
 				}
-				// hy5live.settings = JSON.parse(localStorage.getItem('hy5live.settings'))
 			}
 		}
 
@@ -848,7 +814,6 @@
 				toggleElm(hy5live.settings.toggleElm)
 			}
 		}
-
 
 
 		var snippetManager
@@ -927,8 +892,6 @@
 
 
 			editor.commands.bindKeys({"ctrl-l":null, "left":null})  // or
-			// editor.commands.bindKey("ctrl-t", null)
-
 
 			// replace backspace w/o ctrl + h
 			editor.commands.addCommand({
@@ -1059,14 +1022,11 @@
 
 			if(localStorage.getItem('sketches') != null){
 				hydraFiles.sketches.get()
-				// toggleElm('sketches')
 				initCode = null
 			}
 
 			if(localStorage.getItem('demos') != null){
 				hydraFiles['demos'].get()
-				// toggleElm('sketches')
-				// initCode = null
 			}
 
 			// current temp code
@@ -1091,9 +1051,6 @@
 		}
 		
 		function initSketch(){
-			// clearFiles()
-			// hydraSettings.hydraSketch = null
-			// hy5live.sketch = null
 			hydraFiles.gallery.clear()
 			editor.setValue(hy5live.settings.initCode, 1) // +'\n'
 			editor.focus()
@@ -1126,13 +1083,9 @@
 		};
 
 		window.onblur = function () {
-			// deactivate modifier keys
-			// setTimeout(clearKeys, 0)
 		}
 
 		window.onfocus = function () {
-			// deactivate modifier keys
-			// setTimeout(clearKeys, 0)
 		}
 
 		window.addEventListener("resize", (event) => {
@@ -1194,10 +1147,6 @@
 					
 						reader.onload = (event) => {
 							const fileContents = event.target.result
-						// editor.setValue(fileContents, 1)
-						// editor.renderer.updateFull();
-						// setHydra(fileContents)
-						// hydraInit = true
 							parseHydra(fileContents)
 						}
 					}
@@ -1303,7 +1252,7 @@
 			}else{
 				tempName = ''
 			}
-			// if(editor.session.getLine(0))
+
 			modal({
 				title: 'SAVE SKETCH', 
 				body: `<p>What should we call this sketch?</p>
@@ -1330,8 +1279,7 @@
 								toggleElm('modal')
 							}
 
-							// hy5live.log()
-						}//`hy5live.log(modalValue('modal-save'))`
+						}
 					}
 				],
 				onload: ()=>{
@@ -1339,12 +1287,6 @@
 					document.getElementById('modal-save').select()
 				}
 			})
-				
-			// hydraFiles.sketches.add(sketchName, editor.getValue())
-		}
-
-		function sketchTrash(){
-
 		}
 
 		function sketchImport(files){
@@ -1409,23 +1351,6 @@
 			})
 		}
 
-		// function parseCode(files, index){
-		// 	let tempFiles = hydraFiles[files]
-		// 	tempFiles.parseCode(index)
-		// }
-
-		// function parseCode(index){
-		// 	parseHydra(hydraGallery[index].code)
-		// 	let files = document.getElementsByClassName('file')
-		// 	for(let f of files){
-		// 		f.classList.remove('active')
-		// 	}
-		// 	files[index].classList.add('active')
-		// 	files[index].classList.add('viewed')
-		// 	purgeView(index)
-		// }
-
-		// P5LIVE
 		function removeComments(code){
 			return code.replace(/\/\*[\s\S]*?\*\/|([^:\}\)]|^)\/\/.*$/gm, (_, g1, g2) => Array(_.split('\n').length).join('\n'))
 		}
@@ -1510,22 +1435,13 @@
 					hy5live.frameContent.evalCode(block)	
 					saveHydra() // only save if compiled!
 					
-					// hydraEval(block, start, end)
-					// hy5live.frameContent.eval(editor.getValue())
-					// bug.style.display = 'none'
-					// bugMsg.innerHTML = ''
 				} catch (e) {
-					// hy5live.log("logging", e)
-					// hy5live.log('compile error')
-					// bugMsg.innerHTML = e
-					// bug.style.display = 'flex'
+
 				}
 			}else{
 				try{
 					setHydra(editor.getValue())
 					recompilePulse()
-					// syncVars()
-					// setTimeout(()=>{syncVars()}, 1000)
 				}catch(e){
 					hy5live.log(e)
 				}
@@ -1550,22 +1466,15 @@
 					} catch (e) {
 						e.message = `error ~ ${e.description}`
 						hy5live.bug(e);
-						// console.log(`👀 error found near line ~ ${e.lineNumber}`);
-						// console.log(e.description)
 						return false;
 					}
 				}
 
 				hy5live.frameContent.evalCode(block)
 				saveHydra() // only save if compiled!
-				// hy5live.frameContent.rebuildP5()
-				// bug.style.display = 'none'
-				// bugMsg.innerHTML = ''
 			}catch(e){
 				hy5live.log('compile error')
 				hy5live.log(e)
-				// bugMsg.innerHTML = e
-				// bug.style.display = 'flex'
 			}
 		}
 
@@ -1808,9 +1717,7 @@
 				hy5live.vars.mouseY = hy5live.frameContent.mouseY
 			}
 
-			// if(hy5live.frameContent.hasOwnProperty('time')){
-				hy5live.vars.time = hy5live.frameContent.time
-			// }
+			hy5live.vars.time = hy5live.frameContent.time
 		}
 
 		function syncVars(){
@@ -1857,8 +1764,6 @@
 		}
 
 		function setHydra(fileContents){
-			// return false
-
 			if(editor.getValue().match(/(\/\/).*(no.*p5sound$)/gm)){
 				hy5live.useP5Sound = false
 			}else{
@@ -1877,10 +1782,8 @@
 				try{
 					fileContents = loopBreaker(fileContents).code;
 				} catch (e) {
-					// console.log(`👀 error found near line ~ ${e.lineNumber}`);
 					e.message = `error ~ ${e.description}`
 					hy5live.bug(e);
-					// console.log(e.description)
 					return false;
 				}
 			}

@@ -1,6 +1,6 @@
-# HY5LIVE
+# <img src="includes/images/hy5live.svg" style="height:100px;" alt="HY5LIVE logo">
 v 0.3.0  
-cc [teddavis.org](http://teddavis.org) 2024  
+cc [teddavis.org](http://teddavis.org) 2024 –  
 hydra 🙏 p5.js live-coding environment!
 
 ## SHORTCUTS
@@ -23,7 +23,7 @@ hydra 🙏 p5.js live-coding environment!
 *The last few are Ace Editor specific, [click to view all](https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts)*.
 
 ## ABOUT
-[HY5LIVE](https://hy5live.teddavis.org) is a minimal live-coding editor to showcase [HY5](https://github.com/ffd8/hy5) which bridges the gap between [hydra-synth](https://github.com/hydra-synth/hydra-synth) and [p5.js](https://p5js.org), enabling global-mode code in both frameworks, for the best of both worlds! (`hydra` » `p5` || `p5` » `hydra`). 
+[HY5LIVE](https://hy5live.teddavis.org) is a minimal live-coding editor to showcase [HY5](https://github.com/ffd8/hy5) which bridges the gap between [hydra-synth](https://github.com/hydra-synth/hydra-synth) and [p5.js](https://p5js.org), containing a suite of functions for passing visuals between both frameworks (`hydra` » `p5` || `p5` » `hydra`), while enabling global-mode code within both! 
 
 *FYI, global-mode refers to functions of each library being used without a scoped prefix (ie. `p.` or `synth.`) which is commonly used when combining multiple libraries to avoid naming conflicts (ie. both have a `noise()` function). While scoping avoids conflicts, it requires lots of extra characters and easily trips one up when only sometimes being necessary (ie, chaining).*  
 
@@ -300,7 +300,15 @@ You can run the downloaded HY5LIVE folder within any localhost server setup you 
 - HY5LIVE is live! Visit » [http://localhost:5555](http://localhost:5555)
 - Quit or `CTRL + C` to cancel process.
 
-----
-- source
-- thanks
-- ... more to come (what's missing?)
+## SOURCE
+Found a bug/idea/question?  
+» [https://github.com/ffd8/hy5live](https://github.com/ffd8/hy5live)
+
+## THANKS
+
+- [ojack](https://ojack.xyz/work/hydra/), making [hydra-synth](https://github.com/hydra-synth/hydra-synth)(!) + canvas wizardy setting bug for p5 + hydra magic
+- [Lauren Lee McCarthy](https://lauren-mccarthy.com/p5-js), making [p5.js](https://p5js.org/) (+ [amazing contributors](https://github.com/processing/p5.js#contributors)!)
+- [Flor de Fuego](https://flordefuego.github.io/), constantly pushing boundries with hydra + p5 ( + p5.glitch)
+- [nervousdata](https://nervousdata.com/wiese/txt_phydra.html), sharing amazing ways to use and combine hydra + p5
+- [HGK Basel IDCE Students](https://www.fhnw.ch/en/about-fhnw/schools/academy-of-art-and-design/institute-digital-communication-environments), making hydra sketches, forcing this project to begin...
+- [you](), making it this far down the readme!
