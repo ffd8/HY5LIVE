@@ -159,6 +159,10 @@ class HY5_HYDRA{
 		this.prefs.pixelDensity = res
 	}
 
+	pd(res = 2){
+		this.pixelDensity(res)
+	}
+
 	get(out = '', layer){
 		if(typeof out === 'string' && out !== ''){
 			layer = out
@@ -234,6 +238,10 @@ class HY5_HYDRA{
 				this.get(out)
 			}	
 		}
+	}
+
+	save(){
+		this.hydra.synth.screencap()
 	}
 
 	hide(){

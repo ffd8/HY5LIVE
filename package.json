@@ -1,0 +1,22 @@
+{
+  "name": "hy5live",
+  "version": "0.3.0",
+  "description": "hydra 🙏 p5.js live-coding environment!",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "live-coding",
+    "hydra",
+    "p5.js",
+    "p5",
+    "hy5"
+  ],
+  "author": "Ted Davis",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
