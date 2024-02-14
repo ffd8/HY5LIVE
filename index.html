@@ -36,7 +36,7 @@
 
 	<div id="gui">
 		<div id="gui-header" class="gui-nav">
-			<div class="gui-title" style="cursor:move;float:none;border-bottom:1px solid #666;"><span data-tip="v .3">HY5LIVE</span></div>
+			<div class="gui-title" style="cursor:move;float:none;border-bottom:1px solid #666;"><span id="gui-title-version" data-tip="v .3">HY5LIVE</span></div>
 			<div class="gui-buttons">
 				
 				<div class="nav-button" onclick="toggleAbout();" data-tip="About">
@@ -195,6 +195,7 @@
 		const api = document.getElementById('api');
 		const apiContents = document.getElementById('api-contents');
 		const gui = document.getElementById('gui');
+		const guiVersion = document.getElementById('gui-title-version')
 		const gallery = document.getElementById('gallery');
 		hy5live.frame = document.getElementById('hy5-iframe');
 		hy5live.frameContent = hy5live.frame.contentWindow;
@@ -1047,7 +1048,7 @@
 			api.style.display = 'none'
 			gallery.style.display = 'none'
 			settings.style.display = 'none'
-
+			guiVersion.setAttribute('data-tip', 'v ' + hy5live.version)
 		}
 		
 		function initSketch(){
