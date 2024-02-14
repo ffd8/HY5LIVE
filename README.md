@@ -27,7 +27,7 @@ hydra 🙏 p5.js live-coding environment!
 
 *FYI, global-mode refers to functions of each library being used without a scoped prefix (ie. `p.` or `synth.`) which is commonly used when combining multiple libraries to avoid naming conflicts (ie. both have a `noise()` function). While scoping avoids conflicts, it requires lots of extra characters and easily trips one up when only sometimes being necessary (ie, chaining).*  
 
-HY5LIVE started as a tool for reviewing students homework, evolved into an alternative hydra editor using [Ace](https://ace.c9.io/), bridged into a Hydra meets p5 playground, which then became HY5 library on its own and now is a playground of re-approaching a live-coding editor with some new ideas and techniques. It borrows heavily from [P5LIVE](https://p5live.org/) while reinventig aspects that will likely find their way upstream back into that tool. 
+HY5LIVE started as a tool for reviewing students homework, evolved into an alternative hydra editor using [Ace](https://ace.c9.io/), bridged into a Hydra meets p5 playground, which then became HY5 library on its own and now is a sandbox of re-approaching a live-coding editor with some new ideas and techniques. It borrows heavily from [P5LIVE](https://p5live.org/) while reinventing aspects that will likely find their way upstream back into that tool. 
 
 FYI – this workflow involves multiple fullscreen HTML5 Canvas elements, so a chromium browser is recommended. If performance is low, reduce the resolution using p5's `pixelDensity()` and `H.pixelDensity()` for hydra.
 
@@ -50,20 +50,19 @@ By default, HY5LIVE compiles the current block being edited, so in the above exa
 
 While Hydra code is evaluated as blocks, p5.js code is evaluated per function `{}` brackets. Changes to the `setup()` function will cause a hardCompile, whereas changes to the `draw()` should softCompile for smooth updates. When in doubt or things don't seem to be working, make a hardCompile `CTRL + SHIFT + ENTER`.
 
-While HY5LIVE tries to automatically compile your code on every keypress, using lots of tricks and error catching, you can always force your own recompiles. You can compile the current block (where text cursor is) with `CTRL + ENTER`, a selection of code with `CTRL + SHIFT + ENTER` or the whole iframe + sketch with `CTRL + SHIFT + ENTER`. Therefore, be sure to separate hydra `init` functions like `s0.initScreen()` with separate lines to try and prevent it from re-displaying dialog box unnecessarily.
+HY5LIVE tries to automatically compile your code on every keypress, using lots of tricks and error catching, however you can always force your own recompiles. You can compile the current block (where text cursor is) with `CTRL + ENTER`, a selection of code with `CTRL + SHIFT + ENTER` or the whole iframe + sketch with `CTRL + SHIFT + ENTER`. Therefore, be sure to separate hydra `init` functions like `s0.initScreen()` with separate lines to try and prevent it from re-displaying dialog box unnecessarily.
 
 #### tldr;
-If your code isn't compiling, press `CTRL + SHIFT + ENTER`.  
+If your code isn't compiling/updating, press `CTRL + SHIFT + ENTER`.  
 This does a complete recompile, usually needed for p5.js due to setup/draw.
 
 ## API
 ### Overview
 Under the hood, HY5 creates a few global variables (`HY5`, `P5`, `H`) which are your keys for talking to each framework's canvas and bridging the gap between p5.js and hydra:
  
-- `HY5` stores delay prefs (for checking canvas ready) and inits `H` instances.
 - `P5` affects p5.js and canvas.
-- `H` affects hydra and canvas.  
-*It's a class, allowing multiple hydras for post-post-processing?! Details below.*
+- `H` affects hydra and canvas.
+- `HY5` stores delay prefs (for checking canvas ready) and inits `H` instances.
 
 ### P5
 *p5.js specific – mostly used in the global code space (not within other functions).*
