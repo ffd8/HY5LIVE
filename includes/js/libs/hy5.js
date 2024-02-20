@@ -1,5 +1,5 @@
 /* 
-	HY5 v0.1.0
+	HY5 v0.1.1
 	cc teddavis.org 2024
 	hydra-synth 🙏 p5.js
 	bridging the gap between hydra-synth and p5.js!
@@ -14,7 +14,7 @@ if(window.p5 == undefined){
 }
 
 var HY5 = {
-	version: '0.1.0',
+	version: '0.1.1',
 	revision: 1,
 	prefs : {
 		delay : 50,
@@ -25,7 +25,7 @@ var HY5 = {
 	},
 
 	hydra : (varHydra, varSynth) =>{
-		return new HY5_HYDRA(varHydra, varSynth)
+		return new HY5.hydraClass(varHydra, varSynth)
 	}
 }
 
@@ -101,7 +101,7 @@ var P5 = {
 
 
 // potential for hydra with multiple heads!
-class HY5_HYDRA{
+HY5.hydraClass = class HY5_HYDRA{
 	constructor(hydra = 'hydra', synth = ''){
 		if(window[hydra] == undefined){
 			window[hydra] = new Hydra({
