@@ -56,9 +56,69 @@ HY5LIVE tries to automatically compile your code on every keypress, using lots o
 If your code isn't compiling/updating, press `CTRL + SHIFT + ENTER`.  
 This does a complete recompile, usually needed for p5.js due to setup/draw.
 
+## GETTING STARTED
+While there's more details in the API section below, here's some tips to get going.
+
+### P5 » Hydra
+Send p5.js into hydra by using the following functions:
+
+```js
+// send main canvas to hydra, place in setup() or global
+s0.initP5() // send p5 canvas to hydra s0 (s0 - s3)
+P5.init() // same as above 
+
+// send layer/buffer to hydra, place in setup()
+s1.initP5(lay1) // send p5 'lay1' buffer/layer to hydra s1
+P5.init(s1, lay1) // same as above 
+```
+
+*HY5 started with `P5.` method, however Olivia rightfully suggested `s0.` as approach to stay in tune with Hydra » √ thanks!*
+
+### Hydra » P5
+Send Hydra into P5 by using the following functions:  
+*By default, new layers created dynamically are given `h` as a prefix for hydra, h0 - h3*
+
+```js
+// send main output of Hydra render to p5
+H.get() // use directly, also creates a layer called 'h0'
+H.get('tex') //  same as above, with custom layer name
+
+// send specific output of Hydra to p5, when using render()
+o0.get() // use directly (o0-o3) as image/texture
+H.get(o0) //  use directly (o0-o3), also creates layer called 'h0'
+H.get(o1, 'tex') // same as above, with custom layer name
+H.render(o0) // grabs specific output (o0 - o3), mimics hydra
+H.render(o0, 'tex') // same as above, custom layer name
+
+// send all outputs of Hydra to p5, when using render()
+H.render() // use directly, creates layers h0 - h3 and h[0-3] array
+H.render('t') // same as above, with custom layers prefix (t0 - t3)
+```
+
+### Canvas Tweaks
+Since we have multiple canvases (p5.js and hydra), we likely want to toggle them on/off occasionally or adjust their order (z-index). This can be done by using the `P5` or `H` prefix, depending on which canvas you're addressing:
+
+```js
+// toggle canvas
+P5.show() // show p5.js canvas
+P5.hide() // hide p5.js canvas
+P5.toggle() // toggle p5.js canvas, default 0 (hide), (0 - 1)
+H.show() // show hydra canvas
+H.hide() // hide hydra canvas
+H.toggle() // toggle hydra canvas, default 0 (hide), (0 - 1)
+
+// adjust order, z-index
+P5.zIndex() // send p5.js canvas to back, default is -1
+P5.zIndex(2) // bring in front
+P5.z() // shorthand for above two functions
+H.zIndex() // send hydra canvas to back, default is -1
+H.zIndex(2) // bring in front
+H.z() // shorthand for above two functions
+```
+
 ## API
 ### Overview
-Under the hood, HY5 creates a few global variables (`HY5`, `P5`, `H`) which are your keys for talking to each framework's canvas and bridging the gap between p5.js and hydra:
+Under the hood, HY5 creates a few global variables (`HY5`, `P5`, `H`) which are your keys for talking to each framework's canvas and bridging the gap between p5.js and hydra. It also extends existing hydra objects (`s` and `o` for exchange with p5):
  
 - `P5` affects p5.js and canvas.
 - `H` affects hydra and canvas.
@@ -67,9 +127,13 @@ Under the hood, HY5 creates a few global variables (`HY5`, `P5`, `H`) which are 
 ### P5
 *p5.js specific – mostly used in the global code space (not within other functions).*
 
+**s0.initP5()**  
+**s0. initP5( [layer] )**  
+Same as `P5.init()` function, in Hydra style (use s0 - s3). You can pass an existing p5 layer/image rather than main canvas, ie. `s0.initP5(lay1)`. If doing so, place within the `setup()` after you've initialized the layer.
+
 **P5.init()**  
 **P5.init( [ source, layer ] )**  
-Send p5.js canvas/layer as a hydra source. If no values are set, takes main p5.js canvas and sets hydra's `s0` external source. Use `src(s0).out()` to access it within hydra. Optionally pass it to a specific hydra source (s0, s1, s2, s3). Optionally you can also send another p5.js layer/image. If passing the p5.js webcam capture, use `capture.get()` to dynamically convert to a passible image.  
+Send p5.js canvas/layer as a hydra source. If no values are set, takes main p5.js canvas and sets hydra's `s0` external source. Use `src(s0).out()` to access it within hydra. Optionally pass it to a specific hydra source (s0, s1, s2, s3). Optionally you can also send another p5.js layer/image. If doing so, place within the `setup()` after you've initialized the layer. If passing the p5.js webcam capture, use `capture.get()` to dynamically convert to a passible image.  
 Without params, (`s0`, `drawingContext.canvas`)
 
 **P5.hide()**  
@@ -77,6 +141,11 @@ Hide p5.js canvas.
 
 **P5.show()**  
 Show p5.js canvas.
+
+**P5.toggle()**  
+**P5.toggle( [ tog ] )**  
+Toggle p5.js canvas, use `true/false` or `1/0` to `show()/hide()` the canvas.  
+Without params, (`0`) to hide the canvas.
 
 **P5.zIndex()**  
 **P5.zIndex( [index] )**  
@@ -104,11 +173,15 @@ Without params, (2.0) for retina resolution
 **H.pd( [res] )**  
 Alias of H.pixelDensity()
 
+**o0.get()**  
+**o0.get( [layer] )**  
+Same as `H.get()` function, in Hydra style (use o0 - o3). You can pass an existing p5 layer or a string for dynamically created one, ie. `o0.get('tex')`.
+
 **H.get()**  
 **H.get( [layer] )**  
 **H.get( [output] )**  
 **H.get( [output], [layer] )**  
-Get hydra canvas and set to a p5 layer (`createGraphics`). You can pass an existing p5 layer or a string for dynamically created one, ie. `H.get('tex')`. Passing a hydra output as param (`o0`, `o1`, `o2`, `o3`), it will grab that single output if hydra is set to `render()` (4up view). If both params are given, it will grab a specific hydra output and use a custom layer, ie. `H.getOutput(o2, 'tex2')`.   
+Get hydra canvas to use directly and sets to a p5 layer (`createGraphics`). You can pass an existing p5 layer or a string for dynamically created one, ie. `H.get('tex')`. Passing a hydra output as param (`o0`, `o1`, `o2`, `o3`), it will grab that single output if hydra is set to `render()` (4up view). If both params are given, it will grab a specific hydra output and use a custom layer, ie. `H.getOutput(o2, 'tex2')`.   
 Without params, creates layer called `h0`.
 
 **H.render()**  
@@ -129,6 +202,11 @@ Hide hydra canvas.
 
 **H.show()**  
 Show hydra canvas.
+
+**H.toggle()**  
+**H.toggle( [ tog ] )**  
+Toggle hydra canvas, use `true/false` or `1/0` to `show()/hide()` the canvas.  
+Without params, (`0`) to hide the canvas.
 
 **H.zIndex()**  
 **H.zIndex( [index] )**  

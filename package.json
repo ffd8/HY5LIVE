@@ -1,6 +1,6 @@
 {
   "name": "hy5live",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "hydra 🙏 p5.js live-coding environment!",
   "main": "server.js",
   "scripts": {

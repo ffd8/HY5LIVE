@@ -85,6 +85,14 @@ var P5 = {
 		}
 	},
 
+	toggle : (tog = 0) => {
+		if(tog){
+			P5.show()
+		}else{
+			P5.hide()
+		}
+	},
+
 	zIndex : (zVal = -1) => {
 		if(P5.active()){
 			drawingContext.canvas.style.zIndex = zVal
@@ -114,12 +122,61 @@ HY5.hydraClass = class HY5_HYDRA{
 		if(synth !== ''){
 			window[synth] = this.hydra.synth
 			window[synth].noize = this.hydra.synth.noise
+		}else{
+			window['noize'] = this.hydra.synth.noise // p5/hydra conflict			
 		}
-		window['noize'] = this.hydra.synth.noise // p5/hydra conflict
 		this.canvas = this.hydra.canvas
 		this.prefs = {
 			noSmooth : true,
 		}
+
+		this.linkP5()
+	}
+
+	linkP5(){
+		// p5 » hydra
+		this.hydra.s.forEach((source) => {
+			source.initP5 = (canvas) => {
+				if(P5.active()){
+					if(canvas === undefined){
+						canvas = drawingContext.canvas
+					}else{
+						canvas = canvas.canvas
+					}
+					source.init({src: canvas, dynamic:true})
+					P5.prefs.init = true
+					P5.prefs.canvas = canvas
+					P5.prefs.src = source
+				}else{
+					P5.prefs.initTimer = setTimeout(() => {
+						source.initP5(canvas)
+					}, HY5.prefs.delay, canvas)
+				}
+			}
+		})
+
+		// hydra » p5
+		this.hydra.o.forEach((output) => {
+			output.get = (layer) => {
+				layer = this.checkLayer(layer)
+				this.initLayer(layer)
+				var sx = 0, sy = 0, swh = 1, swh = 2
+				switch(output){
+					case o1:
+						sy = this.canvas.height/2
+						break
+					case o2:
+						sx = this.canvas.width/2
+						break
+					case o3:
+						sx = this.canvas.width/2
+						sy = this.canvas.height/2
+						break
+				}
+				layer.drawingContext.drawImage(this.canvas, sx, sy, this.canvas.width/swh, this.canvas.height/swh, 0, 0, layer.width, layer.height)
+				return layer
+			}
+		})
 	}
 
 	checkLayer(layer = 'h0'){
@@ -187,12 +244,14 @@ HY5.hydraClass = class HY5_HYDRA{
 			}
 		}
 		layer.drawingContext.drawImage(this.canvas, sx, sy, this.canvas.width/swh, this.canvas.height/swh, 0, 0, layer.width, layer.height)
+		return layer
 	}
 
 	getCanvas(canvas, layer){
 		layer = this.checkLayer(layer)
 		this.initLayer(layer)
 		layer.drawingContext.drawImage(canvas, 0, 0, layer.width, layer.height)
+		return layer
 	}
 
 	render(out = '', layer = 'h'){
@@ -230,12 +289,12 @@ HY5.hydraClass = class HY5_HYDRA{
 				layer.drawingContext.drawImage(this.canvas, sx, sy, this.canvas.width/2, this.canvas.height/2, 0, 0, layer.width, layer.height)
 				window[prefix].push(layer)
 			}
-
+			return layer
 		}else{
 			if(layer !== 'h'){
-				this.get(out, layer)
+				return this.get(out, layer)
 			}else{
-				this.get(out)
+				return this.get(out)
 			}	
 		}
 	}
@@ -252,6 +311,14 @@ HY5.hydraClass = class HY5_HYDRA{
 	show(){
 		this.canvas.style.display = 'block'
 		this.prefs.hide = false
+	}
+
+	toggle(tog = 0){
+		if(tog){
+			this.show()
+		}else{
+			this.hide()
+		}
 	}
 	
 	audio(toggle = true){this.hydra.detectAudio = toggle}
