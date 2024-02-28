@@ -231,13 +231,23 @@ Without param, `true`
 Alias of `hydra.canvas` for quick access.
 
 ### HY5
-*Ignore this section except for advanced use.*  
 
-**HY5.delay(newDelay)**
-Set cusom `setTimeout()` delay (default is 100 ms) necessary when referring to dynamically built canvases in further functions below. Default delay worked fine in testing (M1 Mac), but if computer/connection is slower, you may want to set to higher value (in milliseconds).
+**HY5.delay(newDelay)**  
+Set custom `setTimeout()` delay (default is 50 ms) necessary when referring to dynamically built canvases with P5 functions. Default delay worked fine in testing (M1 Mac), but if computer/connection are slower, you may want to set to higher value (in milliseconds) at very top of code.
 
-**HY5.hydra(hydraName, synthName)**
-Create an additional instance of hydra (canvas and synth scoped) for post-post-...-processing! This function has already been called once, setting the global variable `H` (see below). Only needed for extra-wild experiments, see demos for details.
+**HY5.hydra(hydraName, synthName)**  
+Create an additional instance of hydra (canvas and synth scoped) for post-post-...-processing! This function has already been called once, setting the global variable `H`. Only needed for extra-wild experiments, see `hydra » p5 » hydra` demo for details.
+
+```js
+var H2 = HY5.hydra('hydra2', 'synth') // hydra scoped behind 'synth'
+synth.s0.initP5() // p5 » hydra2's instance
+// H2.z(2) // bring to front
+
+H2.pixelDensity(2) // retina 2x resolution
+
+synth.src(synth.s0)
+	.out(synth.o0)
+```
 
 ## SNIPPETS
 The following snippets have been added to Ace's editor.  

@@ -11,7 +11,7 @@ function draw() {
 	\${1}
 }
 
-P5.init() // default: s0, ie. src(s0).out(o0)
+s0.initP5() // src(s0).out()
 `
 
 			},{
@@ -26,9 +26,9 @@ function draw() {
 	\${1}
 }
 
-P5.init() // default: s0
+s0.initP5() // src(s0).out()
 // P5.zIndex() // default: -1
-// P5.hide() // hide p5 canvas, p5.show()
+// P5.toggle(0) // hide p5 canvas, P5.show(), P5.hide()
 // H.pixelDensity() // default: 2, retina hydra
 
 // src(s0).out(o0) // view p5 in hydra
@@ -46,9 +46,9 @@ function draw() {
 	\${1}
 }
 
-P5.init()
-P5.hide()
-H.pixelDensity() // 2.0
+s0.initP5()
+P5.toggle(0)
+H.pixelDensity(2)
 
 src(s0)
 	.out(o0)
@@ -66,14 +66,13 @@ function setup() {
 function draw() {
 	// clear()
 
-	H.get()
-	texture(h0)
+	texture(H.get())
 	\${1}
 }
 
 P5.zIndex(1)
-P5.init()
-// H.hide()
+s0.initP5()
+// H.toggle(0)
 
 osc().out(o0)
 `
@@ -98,11 +97,14 @@ function draw() {
 
 P5.zIndex(1)
 H.pixelDensity(.5)
-// H.hide()
+// H.toggle(0)
 
 osc().out(o0)
+
 noize().out(o1)
+
 voronoi().out(o2)
+
 gradient().out(o3)
 
 render()
@@ -116,9 +118,9 @@ render()
 				"tabTrigger": "h2",
 				"name": "h2",
 				"content": 
-`var H2 = HY5.hydra('h2', 'synth')
-P5.init(synth.s0)
-// H2.z(2)
+`var H2 = HY5.hydra('hydra2', 'synth')
+synth.s0.initP5()
+// H2.z(2) // bring to front
 
 H2.pixelDensity(2)
 
@@ -142,8 +144,8 @@ function draw() {
 	box(height * .4)
 }
 
-P5.init() // p5 » hydra: s0
-// P5.hide()
+s0.initP5() // src(s0).out()
+// P5.toggle(0)
 // H.pixelDensity(2)
 
 src(s0)
@@ -163,16 +165,14 @@ src(s0)
 
 function draw() {
 	clear()
-
-	H.get() // hydra » p5: h0
-	texture(h0)
+	texture(H.get())
 
 	rotateY(frameCount / 3)
 	rotateX(frameCount / 4)
 	box(height / 2)\${1}
 }
 
-P5.init()
+s0.initP5()
 P5.zIndex(1)
 
 // H.hide()
