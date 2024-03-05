@@ -1,5 +1,5 @@
 # <img src="includes/images/hy5live.svg" style="height:100px;" alt="HY5LIVE logo">
-v 0.3.0  
+v 0.3.1  
 cc [teddavis.org](http://teddavis.org) 2024 –  
 hydra 🙏 p5.js live-coding environment!
 
